@@ -123,4 +123,23 @@ def submit_guess():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
+
+
+# [Unit]
+# Description=Gunicorn instance to serve flask app
+# After=network.target
+
+# [Service]
+# User=ubuntu
+# Group=www-data
+# WorkingDirectory=/home/avjadhav/server/Zoo_server
+# ExecStart=/home/avjadhav/server/Zoo_server/venv/bin/gunicorn -b localhost:8000 app:app
+# Restart=always
+
+# [Install]
+# WantedBy=multi-user.target
+
+# upstream Zoo_server {
+#     server 127.0.0.1:8000;
+# }
