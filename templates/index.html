@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Flask App with Image and Form</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.left-side, .right-side {
+    margin: 10px;
+}
+
+.input-large {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s;
+    margin: 10px 0;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+input[type="radio"] {
+    margin: 0 10px;
+}
+
+.right-side img {
+    width: 500px;
+    height: 600px;
+    margin-left: 20px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-side">
+            <button id="audio-button" class="btn btn-primary">
+                <i class="fas fa-volume-up"></i> Play Audio
+            </button>
+            <form method="post">
+                <input type="text" name="user_input" placeholder="Enter text here" class="input-large">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <button id="generate-zebra-pattern" class="btn btn-secondary">Generate Zebra Pattern</button>
+            <button id="generate-cheetah-pattern" class="btn btn-secondary">Generate Cheetah Pattern</button>
+            <a href="{{ url_for('guess') }}" class="btn btn-secondary">Guess the AI Generated Image</a>
+        </div>
+        <div class="right-side">
+            <img id="pattern-image" src="https://via.placeholder.com/300" alt="Pattern Image">
+        </div>
+    </div>
+    <script>
+        document.getElementById('audio-button').addEventListener('click', function() {
+            var audio = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
+            audio.play();
+        });
+
+        document.getElementById('generate-zebra-pattern').addEventListener('click', function() {
+            fetch('/generate_zebra_pattern')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('pattern-image').src = url;
+                })
+                .catch(error => console.error('Error generating zebra pattern:', error));
+        });
+
+        document.getElementById('generate-cheetah-pattern').addEventListener('click', function() {
+            fetch('/generate_cheetah_pattern')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('pattern-image').src = url;
+                })
+                .catch(error => console.error('Error generating cheetah pattern:', error));
+        });
+    </script>
+</body>
+</html>

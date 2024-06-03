@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Guess Result</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+
+    <style>body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+    }
+    
+    .container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+    
+    .left-side, .right-side {
+        margin: 10px;
+    }
+    
+    .input-large {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        background-color: #007bff;
+        color: #fff;
+        transition: background-color 0.3s;
+        margin: 10px 0;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    
+    input[type="radio"] {
+        margin: 0 10px;
+    }
+    
+    .right-side img {
+        width: 500px;
+        height: 600px;
+        margin-left: 20px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ result }}</h1>
+        <a href="{{ url_for('guess') }}" class="btn btn-secondary">Try Again</a>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Home</a>
+    </div>
+</body>
+</html>
