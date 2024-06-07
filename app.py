@@ -74,56 +74,30 @@ def generate_cheetah_pattern():
 
 @app.route('/guess')
 def guess():
-    # Load real and AI images
-    real_images = os.listdir('static')
+    ai_images, real_images = get_images()
+    selected_ai_images = random.sample(ai_images, 8)
+    selected_real_images = random.sample(real_images, 8)
+    images = selected_ai_images + selected_real_images
+    random.shuffle(images)
+    return render_template('guess.html', images=images)
 
-    # Ensure there are at least 8 images of each type
-    real_images = random.sample(real_images, 16)
+@app.route('/submit', methods=['POST'])
+def submit():
+    selections = {}
+    for img in request.form:
+        selections[img] = request.form[img]
+    return render_template('responseguess.html', selections=selections)
 
-    random.shuffle(real_images)
-
-    return render_template('guess.html', images=real_images)
-
-# Dictionary to track the number of times each image was clicked and not clicked
-image_results = {}
-
-@app.route('/submit_guess', methods=['POST'])
-def submit_guess():
-    ai_images = request.form.getlist('correct_answers')
-    guesses = request.form.getlist('guesses')
-
-    # Update the image_results dictionary based on the current submission
-    for image in ai_images:
-        if image in guesses:
-            image_results[image] = image_results.get(image, {'clicked': 0, 'not_clicked': 0})
-            image_results[image]['clicked'] += 1
-        else:
-            image_results[image] = image_results.get(image, {'clicked': 0, 'not_clicked': 0})
-            image_results[image]['not_clicked'] += 1
-
-    for image in [img for img in request.form.getlist('images') if img not in ai_images]:
-        if image in guesses:
-            image_results[image] = image_results.get(image, {'clicked': 0, 'not_clicked': 0})
-            image_results[image]['clicked'] += 1
-        else:
-            image_results[image] = image_results.get(image, {'clicked': 0, 'not_clicked': 0})
-            image_results[image]['not_clicked'] += 1
-
-    # Convert the image_results dictionary to a DataFrame
-    results_df = pd.DataFrame(image_results.values(), index=image_results.keys())
-
-    # Reset the index
-    results_df.reset_index(inplace=True)
-    results_df.rename(columns={'index': 'Image'}, inplace=True)
-
-    # Save the DataFrame to an Excel file
-    results_df.to_excel('results.xlsx', index=False)
-
-    return f"Results saved to results.xlsx."
+# Function to get the images
+def get_images():
+    static_dir = 'static'
+    ai_images = [img for img in os.listdir(static_dir) if img.startswith('ai_images')]
+    real_images = [img for img in os.listdir(static_dir) if img.startswith('real_images')]
+    return ai_images, real_images
 
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True)
 
 
 # [Unit]
