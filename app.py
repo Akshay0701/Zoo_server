@@ -1,4 +1,5 @@
 import random
+from uuid import uuid4
 from flask import Flask, render_template, send_file, jsonify, request, redirect, url_for
 import numpy as np
 from PIL import Image, ImageDraw
@@ -84,9 +85,37 @@ def guess():
 @app.route('/submit', methods=['POST'])
 def submit():
     selections = {}
+    responses = []
+    userID = str(uuid4())
     for img in request.form:
-        selections[img] = request.form[img]
-    return render_template('responseguess.html', selections=selections)
+        selection = request.form[img]
+        selections[img] = selection
+        image_type = 1 if 'real' in img else 0  # 1 for real, 0 for AI
+        answer = 1 if selection == 'real' else 0  # 1 for real, 0 for AI
+        correct = 1 if answer == image_type else 0
+        responses.append({
+            'ID': userID,  # Generate a unique ID for each response
+            'Image Name': img,
+            'AI/Real': image_type,
+            'Answer': answer,
+            'Correct': correct
+        })
+    
+    # Convert responses to a DataFrame
+    df = pd.DataFrame(responses)
+
+    # Define the file path
+    file_path = 'responses.xlsx'
+
+    # Append the new data to the existing Excel file, or create it if it doesn't exist
+    if os.path.exists(file_path):
+        existing_df = pd.read_excel(file_path)
+        df = pd.concat([existing_df, df], ignore_index=True)
+    
+    df.to_excel(file_path, index=False)
+
+    return render_template('responseguess.html', responses=responses, selections=selections)
+
 
 # Function to get the images
 def get_images():

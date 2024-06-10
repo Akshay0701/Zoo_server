@@ -4,14 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Response</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .result-icon {
+            font-size: 24px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .image-preview {
+            width: 100px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Selected Options</h1>
-    <ul>
-        {% for image, selection in selections.items() %}
-            <li>{{ image }}: {{ selection }}</li>
-        {% endfor %}
-    </ul>
-    <a href="/">Go Back</a>
+    <div class="container">
+        <h1>Selected Options</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Correct Answer</th>
+                    <th>User Answer</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                    <tr>
+                        <td><img src="{{ url_for('static', filename=response['Image Name']) }}" alt="{{ response['Image Name'] }}" class="image-preview"></td>
+                        <td>{{ 'Real' if response['AI/Real'] == 1 else 'AI' }}</td>
+                        <td>{{ 'Real' if response['Answer'] == 1 else 'AI' }}</td>
+                        <td class="result-icon">
+                            {% if response['AI/Real'] == response['Answer'] %}
+                                <span class="correct">&#10004;</span>
+                            {% else %}
+                                <span class="incorrect">&#10008;</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="btn-container">
+            <a href="/" class="btn">Go Back</a>
+        </div>
+    </div>
 </body>
 </html>
