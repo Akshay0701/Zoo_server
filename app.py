@@ -94,20 +94,18 @@ def submit():
         answer = 1 if selection == 'real' else 0  # 1 for real, 0 for AI
         correct = 1 if answer == image_type else 0
         responses.append({
-            'ID': userID,  # Generate a unique ID for each response
+            'ID': userID,  
             'Image Name': img,
             'AI/Real': image_type,
             'Answer': answer,
             'Correct': correct
         })
     
-    # Convert responses to a DataFrame
     df = pd.DataFrame(responses)
 
     # Define the file path
     file_path = 'responses.xlsx'
 
-    # Append the new data to the existing Excel file, or create it if it doesn't exist
     if os.path.exists(file_path):
         existing_df = pd.read_excel(file_path)
         df = pd.concat([existing_df, df], ignore_index=True)
@@ -117,7 +115,6 @@ def submit():
     return render_template('responseguess.html', responses=responses, selections=selections)
 
 
-# Function to get the images
 def get_images():
     static_dir = 'static'
     ai_images = [img for img in os.listdir(static_dir) if img.startswith('ai_images')]
