@@ -95,11 +95,10 @@ input[type="radio"] {
             </button>
             <form method="post">
                 <input type="text" name="user_input" placeholder="Enter text here" class="input-large">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                
             </form>
-            <button id="generate-zebra-pattern" class="btn btn-secondary">Generate Zebra Pattern</button>
-            <button id="generate-cheetah-pattern" class="btn btn-secondary">Generate Cheetah Pattern</button>
             <a href="{{ url_for('guess') }}" class="btn btn-secondary">Guess the AI Generated Image</a>
+            <a href="{{ url_for('pattern_generator') }}" class="btn btn-secondary">Pattern Generator</a>
         </div>
         <div class="right-side">
             <img id="pattern-image" src="https://via.placeholder.com/300" alt="Pattern Image">

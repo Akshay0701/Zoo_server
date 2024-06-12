@@ -13,6 +13,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/pattern_generator')
+def pattern_generator():
+    return render_template('pattern_generator.html')
+
 @app.route('/generate_zebra_pattern')
 def generate_zebra_pattern():
     size = 128  
