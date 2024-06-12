@@ -101,16 +101,16 @@ def submit():
             'Correct': correct
         })
     
-    df = pd.DataFrame(responses)
+    # df = pd.DataFrame(responses)
 
-    # Define the file path
-    file_path = 'responses.xlsx'
+    # # Define the file path
+    # file_path = 'responses.xlsx'
 
-    if os.path.exists(file_path):
-        existing_df = pd.read_excel(file_path)
-        df = pd.concat([existing_df, df], ignore_index=True)
+    # if os.path.exists(file_path):
+    #     existing_df = pd.read_excel(file_path)
+    #     df = pd.concat([existing_df, df], ignore_index=True)
     
-    df.to_excel(file_path, index=False)
+    # df.to_excel(file_path, index=False)
 
     return render_template('responseguess.html', responses=responses, selections=selections)
 
