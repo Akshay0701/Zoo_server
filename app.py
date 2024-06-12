@@ -19,9 +19,11 @@ def pattern_generator():
 
 @app.route('/generate_zebra_pattern')
 def generate_zebra_pattern():
-    size = 128  
-    Du, Dv = 0.16, 0.08 
-    F, k = 0.035, 0.060  
+    size = int(request.args.get('size', 128))
+    Du = float(request.args.get('Du', 0.16))
+    Dv = float(request.args.get('Dv', 0.08))
+    F = float(request.args.get('F', 0.035))
+    k = float(request.args.get('k', 0.060))
 
     u = np.ones((size, size))
     v = np.zeros((size, size))
