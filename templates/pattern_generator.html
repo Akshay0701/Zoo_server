@@ -16,7 +16,7 @@
             margin: 20px auto;
             padding: 20px;
             max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
@@ -25,7 +25,7 @@
             align-items: flex-start;
         }
         .form-container {
-            width: 45%; /* Adjust width of form container */
+            width: 45%;
             padding: 10px;
         }
         h1 {
@@ -67,14 +67,36 @@
         #pattern-container {
             margin-top: 30px;
             text-align: center;
-            width: 45%; /* Adjust width of pattern container */
+            width: 45%;
             padding: 10px;
+            position: relative;
         }
+
         #pattern-img {
             width: 100%;
             border-radius: 8px;
+            position: relative;
         }
 
+        .loader {
+            display: none;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         @media screen and (max-width: 799px) {
             .container {
                 flex-direction: column;
@@ -91,41 +113,64 @@
         <div class="form-container">
             <h1>Zebra Pattern Generator</h1>
             <form id="pattern-form">
-                <label for="size">Size:</label>
-                <input type="range" id="size" name="size" min="64" max="200" step="1" value="0">
-                
                 <label for="Du">Du:</label>
-                <input type="range" id="Du" name="Du" min="0.10" max="0.25" step="0.005" value="0.10">
-                
+                <input type="range" id="Du" name="Du" min="0.10" max="0.25" step="0.0001" value="0.10">
+                <span id="Du-value">0.10</span>
+
                 <label for="Dv">Dv:</label>
-                <input type="range" id="Dv" name="Dv" min="0.05" max="0.1" step="0.005" value="0.05">
-                
+                <input type="range" id="Dv" name="Dv" min="0.05" max="0.1" step="0.0001" value="0.05">
+                <span id="Dv-value">0.05</span>
+
                 <label for="F">F:</label>
-                <input type="range" id="F" name="F" min="0.02" max="0.04" step="0.0005" value="0.02">
-                
+                <input type="range" id="F" name="F" min="0.02" max="0.04" step="0.0001" value="0.02">
+                <span id="F-value">0.02</span>
+
                 <label for="k">k:</label>
                 <input type="range" id="k" name="k" min="0.055" max="0.065" step="0.0001" value="0.055">
-                
+                <span id="k-value">0.055</span>
+
                 <input type="submit" value="Generate Pattern">
             </form>
         </div>
         <div id="pattern-container">
+            <div id="loader" class="loader"></div>
             <img id="pattern-img" src="" alt="Zebra Pattern">
         </div>
     </div>
 
     <script>
-        // zebra values 128, 0.16, 0.08, 0.035, 0.060
         // Update pattern when form is submitted
         document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
             const form = new FormData(this);
+            const loader = document.getElementById('loader');
+            const patternImg = document.getElementById('pattern-img');
+
+            // Show loading spinner
+            loader.style.display = 'block';
+            patternImg.style.display = 'none';
+
             fetch('/generate_zebra_pattern?' + new URLSearchParams(form))
                 .then(response => response.blob())
                 .then(blob => {
                     const imgUrl = URL.createObjectURL(blob);
-                    document.getElementById('pattern-img').src = imgUrl;
+                    patternImg.src = imgUrl;
+                    patternImg.onload = function() {
+                        // Hide loading spinner
+                        loader.style.display = 'none';
+                        patternImg.style.display = 'block';
+                    };
                 });
+        });
+
+        // Update value display on slider change
+        document.querySelectorAll('input[type="range"]').forEach(function(slider) {
+            const valueDisplay = document.getElementById(`${slider.id}-value`);
+            valueDisplay.textContent = slider.value;
+
+            slider.addEventListener('input', function() {
+                valueDisplay.textContent = this.value;
+            });
         });
     </script>
 </body>
