@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw
 import io
 import os
 import pandas as pd
+import logging
 
 app = Flask(__name__)
 
@@ -90,36 +91,38 @@ def guess():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    selections = {}
-    responses = []
-    userID = str(uuid4())
-    for img in request.form:
-        selection = request.form[img]
-        selections[img] = selection
-        image_type = 1 if 'real' in img else 0  # 1 for real, 0 for AI
-        answer = 1 if selection == 'real' else 0  # 1 for real, 0 for AI
-        correct = 1 if answer == image_type else 0
-        responses.append({
-            'ID': userID,  
-            'Image Name': img,
-            'AI/Real': image_type,
-            'Answer': answer,
-            'Correct': correct
-        })
-    
-    df = pd.DataFrame(responses)
+    try:
+        selections = {}
+        responses = []
+        userID = str(uuid4())
+        for img in request.form:
+            selection = request.form[img]
+            selections[img] = selection
+            image_type = 1 if 'real' in img else 0  # 1 for real, 0 for AI
+            answer = 1 if selection == 'real' else 0  # 1 for real, 0 for AI
+            correct = 1 if answer == image_type else 0
+            responses.append({
+                'ID': userID,
+                'Image Name': img,
+                'AI/Real': image_type,
+                'Answer': answer,
+                'Correct': correct
+            })
 
-    # Define the file path
-    # file_path = '/home/avjadhav/server/Zoo_server/responses.csv'
-    # # file_path = 'responses.csv'
+        df = pd.DataFrame(responses)
 
-    # if os.path.exists(file_path):
-    #     existing_df = pd.read_excel(file_path)
-    #     df = pd.concat([existing_df, df], ignore_index=True)
-    
-    # df.to_csv(file_path, index=False)
+        # Define the file path
+        file_path = '/home/avjadhav/server/Zoo_server/responses.csv'
 
-    return render_template('responseguess.html', responses=responses, selections=selections)
+        if os.path.exists(file_path):
+            existing_df = pd.read_csv(file_path)  # Changed to read_csv
+            df = pd.concat([existing_df, df], ignore_index=True)
+
+        df.to_csv(file_path, index=False)
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        logging.error(f"Error occurred: {e}", exc_info=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 def get_images():
@@ -130,8 +133,8 @@ def get_images():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host='0.0.0.0', port=8000)
+    app.run(debug=True)
+    # app.run(host='0.0.0.0', port=8000)
 
 
 
