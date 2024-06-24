@@ -119,7 +119,7 @@ def submit():
             df = pd.concat([existing_df, df], ignore_index=True)
 
         df.to_csv(file_path, index=False)
-        return jsonify({"status": "success"}), 200
+        return render_template('responseguess.html', responses=responses, selections=selections)
     except Exception as e:
         logging.error(f"Error occurred: {e}", exc_info=True)
         return jsonify({"status": "error", "message": str(e)}), 500
