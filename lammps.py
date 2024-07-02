@@ -179,7 +179,7 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     #SBATCH --output=job_out
     #SBATCH --error=job_err
     export PATH=/usr/bin:$PATH
-    srun --cpu-bind=cores lmp_mpi -in {lammps_input_path} > {output_folder_path}/indent_out_y.out
+    lmp_mpi -in {lammps_input_path} > {output_folder_path}/indent_out_y.out
     """
     run_script_path = os.path.join(output_folder_path, 'run.sh')
     with open(run_script_path, 'w') as f:
