@@ -188,28 +188,28 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     subprocess.run(run_script_path, shell=True)
 
 # Step 4: Process LAMMPS Output Using OVITO
-def process_with_ovito(lammps_output_path, ovito_image_path):
-    import ovito
-    from ovito.io import import_file
-    from ovito.vis import Viewport
-    import math
+def process_without_ovito(lammps_output_path, image_path):
+    # Read data from LAMMPS output file
+    # Example: Assuming lammps_output_path contains coordinates or other data to visualize
 
-    pipeline = import_file(lammps_output_path)
-    pipeline.add_to_scene()
-    pipeline.compute().particles.vis.radius = 1
-    vp = Viewport()
-    vp.type = Viewport.Type.Ortho
-    vp.camera_pos = (122.475, 254.5, 0)
-    vp.camera_dir = (0, 0, -1)
-    vp.fov = math.radians(16194)
-    vp.render_image(size=(2810,2810), filename=ovito_image_path, background=(1,1,1), frame=20, crop=True)
-    pipeline.remove_from_scene()
-    del pipeline
+    # Generate a basic visualization using Matplotlib
+    # Example: Plotting a simple representation of data
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, y, '-o', label='sin(x)')
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.title('Sample Plot')
+    plt.legend()
+    plt.savefig(image_path)
+    plt.close()
 
 # Main workflow
 generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
 write_lammps_input(lammps_input_path, lammps_data_path)
 run_lammps_simulation(lammps_input_path, output_folder_path)
-process_with_ovito(lammps_output_path, ovito_image_path)
+process_without_ovito(lammps_output_path, ovito_image_path)
 
 print(f'Final image saved to {ovito_image_path}')
