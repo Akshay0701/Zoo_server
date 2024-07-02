@@ -188,21 +188,35 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     subprocess.run(run_script_path, shell=True)
 
 # Step 4: Process LAMMPS Output Using OVITO
-def process_without_ovito(lammps_output_path, image_path):
-    # Read data from LAMMPS output file
-    # Example: Assuming lammps_output_path contains coordinates or other data to visualize
+def create_image_from_lammps_output(lammps_output_path, image_path):
+    # Example: Read data from LAMMPS output file
+    # Assuming the output format has x, y, z coordinates
+    with open(lammps_output_path, 'r') as f:
+        lines = f.readlines()
 
-    # Generate a basic visualization using Matplotlib
-    # Example: Plotting a simple representation of data
-    x = np.linspace(0, 10, 100)
-    y = np.sin(x)
+    # Example: Extracting coordinates (modify according to your output format)
+    coordinates = []
+    for line in lines:
+        if line.startswith('ATOM'):
+            parts = line.split()
+            x = float(parts[1])
+            y = float(parts[2])
+            z = float(parts[3])
+            coordinates.append((x, y, z))
 
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, y, '-o', label='sin(x)')
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.title('Sample Plot')
-    plt.legend()
+    # Convert list of tuples to numpy array for easier manipulation
+    coordinates = np.array(coordinates)
+
+    # Example: Create a 2D projection of coordinates (adjust as per your data)
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111)
+    ax.scatter(coordinates[:, 0], coordinates[:, 1], c='blue', marker='o', label='Particles')
+    ax.set_xlabel('X-axis')
+    ax.set_ylabel('Y-axis')
+    ax.set_title('LAMMPS Output Visualization')
+    ax.legend()
+
+    # Save the figure as an image
     plt.savefig(image_path)
     plt.close()
 
@@ -210,6 +224,6 @@ def process_without_ovito(lammps_output_path, image_path):
 generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
 write_lammps_input(lammps_input_path, lammps_data_path)
 run_lammps_simulation(lammps_input_path, output_folder_path)
-process_without_ovito(lammps_output_path, ovito_image_path)
+create_image_from_lammps_output(lammps_output_path, ovito_image_path)
 
 print(f'Final image saved to {ovito_image_path}')
