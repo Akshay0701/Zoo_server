@@ -8,6 +8,8 @@ import os
 import pandas as pd
 import logging
 
+import lammps
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -114,6 +116,9 @@ def submit():
         # Define the file path
         file_path = '/home/avjadhav/server/Zoo_server/responses.csv'
 
+        # for testing local 
+        # file_path = 'responses.csv'
+
         if os.path.exists(file_path):
             existing_df = pd.read_csv(file_path)  # Changed to read_csv
             df = pd.concat([existing_df, df], ignore_index=True)
@@ -130,6 +135,36 @@ def get_images():
     ai_images = [img for img in os.listdir(static_dir) if img.startswith('ai_images')]
     real_images = [img for img in os.listdir(static_dir) if img.startswith('real_images')]
     return ai_images, real_images
+
+
+@app.route('/process_image')
+def process_image():
+    # image_name = request.form['image_name']
+    image_path = f'static/real_images10'
+    
+    output_folder_path = 'outputImage'
+    binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
+    lammps_data_path = os.path.join(output_folder_path, 'data.data')
+    lammps_input_path = os.path.join(output_folder_path, 'input.in')
+    lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
+    ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
+    
+    if not os.path.exists(output_folder_path):
+        os.makedirs(output_folder_path)
+
+    # Step 1: Generate LAMMPS Model from Image
+    lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+    
+    # Step 2: Write LAMMPS Input File
+    lammps.write_lammps_input(lammps_input_path, lammps_data_path)
+    
+    # Step 3: Run LAMMPS Simulation
+    lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
+    
+    # Step 4: Process LAMMPS Output Using OVITO
+    lammps.process_with_ovito(lammps_output_path, ovito_image_path)
+    
+    return send_file(ovito_image_path, mimetype='image/png')
 
 
 if __name__ == '__main__':
