@@ -187,20 +187,35 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     os.chmod(run_script_path, 0o755)
     subprocess.run(run_script_path, shell=True)
 
-# Step 4: Process LAMMPS Output Using OVITO
 def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
-    # Assuming your dump file contains coordinates of particles
-    # Read the dump file to extract coordinates
+    # Initialize an empty list to store particle coordinates
     coordinates = []
+
+    # Open the LAMMPS dump file
     with open(lammps_output_path, 'r') as f:
+        found_data = False
         for line in f:
+            # Skip header lines until data is found
             if line.startswith('ITEM: ATOMS'):
-                break  # Skip header
-        for line in f:
-            if line.strip():  # Skip empty lines
-                data = line.split()
-                if len(data) >= 4:  # Assuming x, y, z coordinates are present
-                    coordinates.append([float(data[1]), float(data[2]), float(data[3])])
+                found_data = True
+                continue
+            if not found_data or line.strip() == '':
+                continue
+            
+            # Split the line into components
+            data = line.split()
+            
+            # Check if there are at least 4 elements (including the atom ID)
+            if len(data) >= 4:
+                try:
+                    # Attempt to convert the relevant columns to floats
+                    x = float(data[1])
+                    y = float(data[2])
+                    z = float(data[3])
+                    coordinates.append([x, y, z])
+                except ValueError:
+                    # Handle the case where conversion fails
+                    continue
     
     # Convert coordinates to numpy array for easier manipulation
     coordinates = np.array(coordinates)
