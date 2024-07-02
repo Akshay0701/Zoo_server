@@ -6,6 +6,21 @@ from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
 
+# Paths
+
+image_path = 'static/real_images10/test_image.png'
+        
+output_folder_path = 'outputImage'
+binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
+lammps_data_path = os.path.join(output_folder_path, 'data.data')
+lammps_input_path = os.path.join(output_folder_path, 'input.in')
+lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
+ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
+
+# Create output directories if they don't exist
+os.makedirs(output_folder_path, exist_ok=True)
+os.makedirs(os.path.dirname(binary_image_path), exist_ok=True)
+
 # Step 1: Image Processing and Model Generation
 def generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path):
     img = Image.open(image_path).convert('L')
@@ -190,3 +205,11 @@ def process_with_ovito(lammps_output_path, ovito_image_path):
     vp.render_image(size=(2810,2810), filename=ovito_image_path, background=(1,1,1), frame=20, crop=True)
     pipeline.remove_from_scene()
     del pipeline
+
+# Main workflow
+generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+write_lammps_input(lammps_input_path, lammps_data_path)
+run_lammps_simulation(lammps_input_path, output_folder_path)
+process_with_ovito(lammps_output_path, ovito_image_path)
+
+print(f'Final image saved to {ovito_image_path}')
