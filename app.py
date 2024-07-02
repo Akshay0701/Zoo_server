@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import logging
 
-import lammps
+# import lammps
 
 app = Flask(__name__)
 
@@ -137,35 +137,35 @@ def get_images():
     return ai_images, real_images
 
 
-@app.route('/process_image')
-def process_image():
-    try:
-        # Assume image_path is a path to a static image for testing purposes
-        image_path = 'static/real_images51.jpg'
+# @app.route('/process_image')
+# def process_image():
+#     try:
+#         # Assume image_path is a path to a static image for testing purposes
+#         image_path = 'static/real_images51.jpg'
         
-        output_folder_path = 'outputImage'
-        binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
-        lammps_data_path = os.path.join(output_folder_path, 'data.data')
-        lammps_input_path = os.path.join(output_folder_path, 'input.in')
-        lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
-        ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
+#         output_folder_path = 'outputImage'
+#         binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
+#         lammps_data_path = os.path.join(output_folder_path, 'data.data')
+#         lammps_input_path = os.path.join(output_folder_path, 'input.in')
+#         lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
+#         ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
         
-        if not os.path.exists(output_folder_path):
-            os.makedirs(output_folder_path)
+#         if not os.path.exists(output_folder_path):
+#             os.makedirs(output_folder_path)
 
-        lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+#         lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
         
-        lammps.write_lammps_input(lammps_input_path, lammps_data_path)
+#         lammps.write_lammps_input(lammps_input_path, lammps_data_path)
         
-        lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
+#         lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
         
-        lammps.create_image_from_lammps_output(lammps_output_path, ovito_image_path)
+#         lammps.create_image_from_lammps_output(lammps_output_path, ovito_image_path)
         
-        return send_file(ovito_image_path, mimetype='image/png')
+#         return send_file(ovito_image_path, mimetype='image/png')
 
-    except Exception as e:
-        app.logger.error(f"Error processing image: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+#     except Exception as e:
+#         app.logger.error(f"Error processing image: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
