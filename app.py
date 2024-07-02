@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import logging
 
-# import lammps
+import lammps
 
 app = Flask(__name__)
 
@@ -141,7 +141,7 @@ def get_images():
 def process_image():
     try:
         # Assume image_path is a path to a static image for testing purposes
-        image_path = 'static/real_images10/test_image.png'
+        image_path = 'static/real_images51.jpg'
         
         output_folder_path = 'outputImage'
         binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
@@ -153,21 +153,13 @@ def process_image():
         if not os.path.exists(output_folder_path):
             os.makedirs(output_folder_path)
 
-        # Step 1: Generate LAMMPS Model from Image
-        # app.logger.debug('Generating LAMMPS model')
-        # lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+        lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
         
-        # # Step 2: Write LAMMPS Input File
-        # app.logger.debug('Writing LAMMPS input file')
-        # lammps.write_lammps_input(lammps_input_path, lammps_data_path)
+        lammps.write_lammps_input(lammps_input_path, lammps_data_path)
         
-        # # Step 3: Run LAMMPS Simulation
-        # app.logger.debug('Running LAMMPS simulation')
-        # lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
+        lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
         
-        # # Step 4: Process LAMMPS Output Using OVITO
-        # app.logger.debug('Processing with OVITO')
-        # lammps.process_with_ovito(lammps_output_path, ovito_image_path)
+        lammps.create_image_from_lammps_output(lammps_output_path, ovito_image_path)
         
         return send_file(ovito_image_path, mimetype='image/png')
 
