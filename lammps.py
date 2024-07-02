@@ -131,7 +131,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     compute         peratom all stress/atom NULL
     fix 999 all ave/atom 10 5 1000 c_peratom[1] c_peratom[1] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
     variable mises atom sqrt((f_999[1]-f_999[2])*(f_999[1]-f_999[2])+(f_999[2]-f_999[3])*(f_999[2]-f_999[3])+(f_999[1]-f_999[3])*(f_999[1]-f_999[3])+6*(f_999[4]*f_999[4]+f_999[5]*f_999[5]+f_999[6]*f_999[6]))
-    dump 400 all custom 5000 dump_y.stress type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
+    dump 400 all custom 5000 outputImage/dump_y.stress type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
     velocity        all create 300.00 376847
     fix             initnve         all nve
     fix             initcont  all temp/rescale 100 300.0 300.0  10.  0.5
@@ -162,7 +162,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     # Decide at which atom you pull (change
     #     when you change 'NL' in 'long_pull.py')
     ################################################
-    run              2000
+    run              200
     """.format(lammps_data_path)
     with open(lammps_input_path, 'w') as f:
         f.write(lammps_input_content)
