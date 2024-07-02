@@ -137,7 +137,7 @@ def get_images():
     return ai_images, real_images
 
 
-@app.route('/process_image', methods=['POST'])
+@app.route('/process_image')
 def process_image():
     try:
         # Assume image_path is a path to a static image for testing purposes
