@@ -8,7 +8,7 @@ import subprocess
 
 # Paths
 
-image_path = 'static/real_images10/test_image.png'
+image_path = 'static/real_images51.jpg'
         
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
