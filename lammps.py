@@ -5,10 +5,7 @@ import matplotlib.pyplot as plt
 from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
-from ovito.io import import_file, export_file
-from ovito.vis import Viewport, TachyonRenderer
-from ovito.modifiers import ColorCodingModifier
-import math
+
 # Paths
 
 image_path = 'static/real_images51.jpg'
@@ -191,30 +188,50 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     subprocess.run(run_script_path, shell=True)
 
 def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
-    # Load the LAMMPS output dump file into OVITO
-    pipeline = import_file(lammps_output_path, multiple_frames=True)
+    # Initialize an empty list to store particle coordinates
+    coordinates = []
+
+    # Open the LAMMPS dump file
+    with open(lammps_output_path, 'r') as f:
+        found_data = False
+        for line in f:
+            # Skip header lines until data is found
+            if line.startswith('ITEM: ATOMS'):
+                found_data = True
+                continue
+            if not found_data or line.strip() == '':
+                continue
+            
+            # Split the line into components
+            data = line.split()
+            
+            # Check if there are at least 4 elements (including the atom ID)
+            if len(data) >= 4:
+                try:
+                    # Attempt to convert the relevant columns to floats
+                    x = float(data[1])
+                    y = float(data[2])
+                    z = float(data[3])
+                    coordinates.append([x, y, z])
+                except ValueError:
+                    # Handle the case where conversion fails
+                    continue
     
-    # Access the last frame of the imported animation sequence
-    last_frame = pipeline.source.num_frames - 1
-    pipeline.source.current_frame = last_frame
-    
-    # Modify particle visualization settings
-    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), only_selected=True, start_value=0, end_value=5000))
-    
-    # Setup viewport for rendering
-    vp = Viewport()
-    vp.type = Viewport.Type.Ortho
-    vp.camera_pos = (122.475, 254.5, 0)
-    vp.camera_dir = (0, 0, -1)
-    vp.fov = math.radians(16194)
-    
-    # Render the image
-    vp.render_image(size=(2810, 2810), filename=ovito_image_path, background=(1, 1, 1), frame=last_frame, crop=True, renderer=TachyonRenderer())
-    
-    # Clean up: remove pipeline from scene and release resources
-    pipeline.remove_from_scene()
-    del pipeline
-    
+    # Convert coordinates to numpy array for easier manipulation
+    coordinates = np.array(coordinates)
+
+    # Plotting
+    fig, ax = plt.subplots()
+    ax.scatter(coordinates[:, 0], coordinates[:, 1], c='blue', marker='o', label='Particles')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title('Particles Distribution')
+    ax.legend()
+
+    # Save the plot as an image
+    plt.savefig(ovito_image_path, dpi=300)
+    plt.close()
+
     print(f'Image saved to {ovito_image_path}')
 
 # Main workflow
