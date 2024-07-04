@@ -8,13 +8,52 @@ import os
 import pandas as pd
 import logging
 
-# import lammps
+from lammps import generate_model, write_lammps_input, run_lammps_simulation, create_image_from_lammps_output
+
+# Paths
+output_folder_path = 'outputImage'
+binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
+lammps_data_path = os.path.join(output_folder_path, 'data.data')
+lammps_input_path = os.path.join(output_folder_path, 'input.in')
+lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
+ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
+
+# Create output directories if they don't exist
+os.makedirs(output_folder_path, exist_ok=True)
+os.makedirs(os.path.dirname(binary_image_path), exist_ok=True)
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/lammps')
+def select_image():
+    ai_images, real_images = get_images()
+    selected_ai_images = random.sample(ai_images, 8)
+    selected_real_images = random.sample(real_images, 8)
+    images = selected_ai_images + selected_real_images
+    random.shuffle(images)
+    return render_template('animalImageLammp.html', images=images)
+
+@app.route('/process_image', methods=['POST'])
+def process_image():
+    selected_image = request.form.get('selected_image')
+    image_path = os.path.join('static', 'animal_images', selected_image)
+    
+    generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+    write_lammps_input(lammps_input_path, lammps_data_path)
+    run_lammps_simulation(lammps_input_path, output_folder_path)
+    create_image_from_lammps_output(lammps_output_path, ovito_image_path)
+    
+    return redirect(url_for('show_image'))
+
+@app.route('/show_image')
+def show_image():
+    # Assuming 'outputImage/final_image.png' exists in your static folder
+    image_path = 'outputImage/final_image.png'
+    return send_file(image_path, mimetype='image/png')
 
 @app.route('/pattern_generator')
 def pattern_generator():
