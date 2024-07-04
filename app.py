@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import logging
 
-from lammps import generate_model, write_lammps_input, run_lammps_simulation, create_image_from_lammps_output
+# from lammps import generate_model, write_lammps_input, run_lammps_simulation, create_image_from_lammps_output
 
 # Paths
 # output_folder_path = 'outputImage'
