@@ -18,9 +18,6 @@ lammps_input_path = os.path.join(output_folder_path, 'input.in')
 lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
 ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
 
-# Create output directories if they don't exist
-os.makedirs(output_folder_path, exist_ok=True)
-os.makedirs(os.path.dirname(binary_image_path), exist_ok=True)
 
 app = Flask(__name__)
 
