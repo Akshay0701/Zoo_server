@@ -200,6 +200,9 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
     last_frame = pipeline.source.num_frames - 1
     data = pipeline.compute(last_frame)
     
+    # Add pipeline to scene
+    pipeline.add_to_scene()
+    
     # Modify particle visualization settings
     pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), only_selected=True, start_value=0, end_value=5000))
     
