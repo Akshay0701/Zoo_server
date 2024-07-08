@@ -198,7 +198,7 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
     
     # Access the last frame of the imported animation sequence
     last_frame = pipeline.source.num_frames - 1
-    pipeline.source.current_frame = last_frame
+    data = pipeline.compute(last_frame)
     
     # Modify particle visualization settings
     pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), only_selected=True, start_value=0, end_value=5000))
