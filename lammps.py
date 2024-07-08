@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
+import sys
+from PySide6.QtWidgets import QApplication
 from ovito.io import import_file, export_file
 from ovito.vis import Viewport, TachyonRenderer
 from ovito.modifiers import ColorCodingModifier
 import math
 
 # Paths
-
 image_path = 'static/real_images51.jpg'
-        
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
@@ -24,6 +24,9 @@ ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
 # Create output directories if they don't exist
 os.makedirs(output_folder_path, exist_ok=True)
 os.makedirs(os.path.dirname(binary_image_path), exist_ok=True)
+
+# Initialize QApplication for offscreen rendering
+app = QApplication(sys.argv)
 
 # Step 1: Image Processing and Model Generation
 def generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path):
@@ -157,9 +160,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     compute         max_y all reduce max y
     compute         min_y all reduce min y
     fix      stretch all deform 100 y erate 0.0001
-   
-
- thermo_style    custom step f_2[2] f_21[2] c_max_y c_min_y temp etotal
+    thermo_style    custom step f_2[2] f_21[2] c_max_y c_min_y temp etotal
     thermo_modify   flush yes
     thermo          1000
     ###############################################m
