@@ -35,7 +35,7 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
     grayImage = np.array(img_resized)
 
     # Convert grayscale to binary image using a threshold
-    binaryImage = np.where(grayImage >= 128, 1, 0)
+    binaryImage = np.where(grayImage >= 50, 1, 0)
     plt.imshow(binaryImage, cmap='gray')
     plt.axis('off')
     plt.savefig(binary_image_path, format='png', dpi=300, bbox_inches='tight')
@@ -152,7 +152,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     ################################################
     # Relax structure for 200000 steps
     ################################################
-    run		10000
+    run		10
     ################################################
     # NOW: Loading loop applied
     ################################################
