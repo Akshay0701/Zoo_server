@@ -35,7 +35,7 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
     grayImage = np.array(img_resized)
 
     # Convert grayscale to binary image using a threshold
-    binaryImage = np.where(grayImage >= 0, 1, 0)
+    binaryImage = np.where(grayImage >= 128, 1, 0)
     plt.imshow(binaryImage, cmap='gray')
     plt.axis('off')
     plt.savefig(binary_image_path, format='png', dpi=300, bbox_inches='tight')
@@ -136,9 +136,9 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     min_modify      dmax 0.01
     minimize        0.0 0.0 2000 2000
     compute         peratom all stress/atom NULL
-    fix 999 all ave/atom 10 5 1000 c_peratom[1] c_peratom[1] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
+    fix 999 all ave/atom 10 5 100 c_peratom[1] c_peratom[1] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
     variable mises atom sqrt((f_999[1]-f_999[2])*(f_999[1]-f_999[2])+(f_999[2]-f_999[3])*(f_999[2]-f_999[3])+(f_999[1]-f_999[3])*(f_999[1]-f_999[3])+6*(f_999[4]*f_999[4]+f_999[5]*f_999[5]+f_999[6]*f_999[6]))
-    dump 400 all custom 5000 outputImage/dump_y.stress type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
+    dump 400 all custom 500 outputImage/dump_y.stress type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
     velocity        all create 300.00 376847
     fix             initnve         all nve
     fix             initcont  all temp/rescale 100 300.0 300.0  10.  0.5
