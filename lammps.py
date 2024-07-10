@@ -110,7 +110,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     atom_style      bond
     timestep	0.002
     dimension       3
-    read_data	{}
+    read_data	{lammps_data_path}
     neighbor	0.2 bin
     neigh_modify    every 100 delay 100
     pair_style soft 0.8
@@ -168,7 +168,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     #     when you change 'NL' in 'long_pull.py')
     ################################################
     run              2000
-    """.format(lammps_data_path)
+    """
     with open(lammps_input_path, 'w') as f:
         f.write(lammps_input_content)
 
@@ -238,7 +238,7 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
     print(f'Image saved to {ovito_image_path}')
 
 # Main workflow
-generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
+# generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
 write_lammps_input(lammps_input_path, lammps_data_path)
 run_lammps_simulation(lammps_input_path, output_folder_path)
 create_image_from_lammps_output(lammps_output_path, ovito_image_path)
