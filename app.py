@@ -38,10 +38,10 @@ def select_image():
 @app.route('/process_image', methods=['POST'])
 def process_image():
     selected_image = request.form.get('selected_image')
-    image_path = os.path.join('static', selected_image)
+    # image_path = os.path.join('static', selected_image)
     
     # Define the command to run the external Python script
-    script_command = ['python', 'lammps.py', image_path]
+    script_command = ['python', 'lammps.py', selected_image]
     
     # Run the script and wait for it to complete
     result = subprocess.run(script_command, capture_output=True, text=True)
