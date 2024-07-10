@@ -51,7 +51,7 @@ def process_image():
     subprocess.Popen(script_command)
     
     # Return the job ID immediately
-    return jsonify({'job_id': job_id})
+    return redirect(url_for('show_image'))
 
 @app.route('/show_image')
 def show_image():
