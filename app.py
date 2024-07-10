@@ -38,7 +38,7 @@ def select_image():
 @app.route('/process_image', methods=['POST'])
 def process_image():
     selected_image = request.form.get('selected_image')
-    # image_path = os.path.join('static', selected_image)
+    image_path = os.path.join('static', selected_image)
     
     # # Define the command to run the external Python script
     # script_command = ['python', 'lammps.py', selected_image]
@@ -50,7 +50,7 @@ def process_image():
     # if result.returncode != 0:
     #     return f"Error: {result.stderr}"
     
-    return selected_image
+    return image_path
 
 @app.route('/show_image')
 def show_image():
