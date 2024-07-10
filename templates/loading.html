@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function processImage() {
+            // Get selected image from form input
+            var selectedImage = document.getElementById('selected_image').value;
+            
+            // Make AJAX POST request to Flask endpoint
+            $.ajax({
+                url: '/process_image',
+                type: 'POST',
+                data: { selected_image: selectedImage },
+                success: function(response) {
+                    var jobID = response.job_id;
+                    checkJobStatus(jobID);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    alert('Error processing image. Please try again.');
+                }
+            });
+        }
+
+        function checkJobStatus(jobID) {
+            // Polling interval in milliseconds (e.g., check every 2 seconds)
+            var interval = 2000;
+
+            var checkStatus = setInterval(function() {
+                $.ajax({
+                    url: '/job_status/' + jobID,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.status === 'complete') {
+                            clearInterval(checkStatus);
+                            showImage(response.image_url);
+                        } else if (response.status === 'error') {
+                            clearInterval(checkStatus);
+                            alert('Error processing image.');
+                        } else {
+                            // Update loading progress (e.g., display a loading bar)
+                            var progress = response.progress || 0;
+                            updateLoadingProgress(progress);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error:', error);
+                        clearInterval(checkStatus);
+                        alert('Error checking job status.');
+                    }
+                });
+            }, interval);
+        }
+
+        function updateLoadingProgress(progress) {
+            // Update UI with loading progress (e.g., display a progress bar)
+            var progressBar = document.getElementById('progress_bar');
+            progressBar.style.width = progress + '%';
+            progressBar.innerHTML = progress + '%';
+        }
+
+        function showImage(imageURL) {
+            // Redirect to show image page or display the image
+            window.location.href = imageURL;
+        }
+    </script>
+</head>
+<body>
+    <h1>Image Processing</h1>
+    <form id="image_form" method="POST">
+        <label for="selected_image">Select Image:</label>
+        <input type="file" id="selected_image" name="selected_image" accept="image/*">
+        <button type="button" onclick="processImage()">Process Image</button>
+    </form>
+    <div id="loading_bar">
+        <div id="progress_bar" style="width: 0%;">0%</div>
+    </div>
+</body>
+</html>
