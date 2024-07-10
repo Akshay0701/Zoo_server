@@ -41,9 +41,6 @@ def process_image():
     selected_image = request.form.get('selected_image')
     image_path = os.path.join('static', selected_image)
     
-    # Generate a unique job ID
-    job_id = str(uuid.uuid4())
-    
     # Define the command to run the external Python script
     script_command = ['python3', 'lammps.py', image_path]
     
@@ -186,37 +183,6 @@ def get_images():
     ai_images = [img for img in os.listdir(static_dir) if img.startswith('ai_images')]
     real_images = [img for img in os.listdir(static_dir) if img.startswith('real_images')]
     return ai_images, real_images
-
-
-# @app.route('/process_image')
-# def process_image():
-#     try:
-#         # Assume image_path is a path to a static image for testing purposes
-#         image_path = 'static/real_images51.jpg'
-        
-#         output_folder_path = 'outputImage'
-#         binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
-#         lammps_data_path = os.path.join(output_folder_path, 'data.data')
-#         lammps_input_path = os.path.join(output_folder_path, 'input.in')
-#         lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
-#         ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
-        
-#         if not os.path.exists(output_folder_path):
-#             os.makedirs(output_folder_path)
-
-#         lammps.generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
-        
-#         lammps.write_lammps_input(lammps_input_path, lammps_data_path)
-        
-#         lammps.run_lammps_simulation(lammps_input_path, output_folder_path)
-        
-#         lammps.create_image_from_lammps_output(lammps_output_path, ovito_image_path)
-        
-#         return send_file(ovito_image_path, mimetype='image/png')
-
-#     except Exception as e:
-#         app.logger.error(f"Error processing image: {str(e)}")
-#         return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
