@@ -1,19 +1,25 @@
 import os
+import sys
+import argparse
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
-import sys
 from PySide6.QtWidgets import QApplication
 from ovito.io import import_file, export_file
 from ovito.vis import Viewport, TachyonRenderer
 from ovito.modifiers import ColorCodingModifier
 import math
 
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Process an image to generate a LAMMPS model.')
+parser.add_argument('image_path', type=str, help='Path to the input image')
+args = parser.parse_args()
+
 # Paths
-image_path = 'static/real_images48.jpg'
+image_path = args.image_path
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
@@ -96,7 +102,7 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
 
 # Step 2: Writing LAMMPS Input Script
 def write_lammps_input(lammps_input_path, lammps_data_path):
-    lammps_input_content = """
+    lammps_input_content = f"""
     ################################################
     # INPUT FILE
     ################################################
@@ -110,7 +116,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     atom_style      bond
     timestep	0.002
     dimension       3
-    read_data	{}
+    read_data	{lammps_data_path}
     neighbor	0.2 bin
     neigh_modify    every 100 delay 100
     pair_style soft 0.8
@@ -168,7 +174,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     #     when you change 'NL' in 'long_pull.py')
     ################################################
     run              2000
-    """.format(lammps_data_path)
+    """
     with open(lammps_input_path, 'w') as f:
         f.write(lammps_input_content)
 

@@ -1,4 +1,5 @@
 import random
+import subprocess
 from uuid import uuid4
 from flask import Flask, render_template, send_file, jsonify, request, redirect, url_for
 import numpy as np
@@ -37,12 +38,17 @@ def select_image():
 @app.route('/process_image', methods=['POST'])
 def process_image():
     selected_image = request.form.get('selected_image')
-    image_path = os.path.join('static', 'animal_images', selected_image)
+    image_path = os.path.join('static', selected_image)
     
-    # generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path)
-    # write_lammps_input(lammps_input_path, lammps_data_path)
-    # run_lammps_simulation(lammps_input_path, output_folder_path)
-    # create_image_from_lammps_output(lammps_output_path, ovito_image_path)
+    # Define the command to run the external Python script
+    script_command = ['python', 'lammps.py', image_path]
+    
+    # Run the script and wait for it to complete
+    result = subprocess.run(script_command, capture_output=True, text=True)
+    
+    # Check if the script ran successfully
+    if result.returncode != 0:
+        return f"Error: {result.stderr}"
     
     return redirect(url_for('show_image'))
 
