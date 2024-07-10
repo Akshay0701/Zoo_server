@@ -44,7 +44,7 @@ def process_image():
     script_command = ['python3', 'lammps.py', image_path]
     
     # Run the script and wait for it to complete
-    result = subprocess.run(script_command, capture_output=True, text=True)
+    result = subprocess.run(script_command)
     
     # Check if the script ran successfully
     if result.returncode != 0:
