@@ -1,7 +1,6 @@
 import random
 import subprocess
 from uuid import uuid4
-import uuid
 from flask import Flask, render_template, send_file, jsonify, request, redirect, url_for
 import numpy as np
 from PIL import Image, ImageDraw
@@ -41,17 +40,17 @@ def process_image():
     selected_image = request.form.get('selected_image')
     image_path = os.path.join('static', selected_image)
     
-    # Generate a unique job ID
-    job_id = str(uuid.uuid4())
-    
     # Define the command to run the external Python script
     script_command = ['python3', 'lammps.py', image_path]
     
-    # Run the script asynchronously
-    subprocess.Popen(script_command)
+    # Run the script and wait for it to complete
+    result = subprocess.run(script_command)
     
-    # Return the job ID immediately
-    return jsonify({'job_id': job_id})
+    # Check if the script ran successfully
+    if result.returncode != 0:
+        return f"Error: {result.stderr}"
+    
+    return redirect(url_for('show_image'))
 
 @app.route('/show_image')
 def show_image():
