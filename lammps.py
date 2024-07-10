@@ -19,7 +19,7 @@ parser.add_argument('image_path', type=str, help='Path to the input image')
 args = parser.parse_args()
 
 # Paths
-image_path = args.image_path
+image_path = "static/real_images51.jpg"
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
