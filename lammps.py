@@ -193,12 +193,27 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     subprocess.run(run_script_path, shell=True)
 
 def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
+    # Ensure the LAMMPS output file exists and is valid
+    if not os.path.exists(lammps_output_path):
+        print(f"Error: {lammps_output_path} does not exist.")
+        return
+    
     # Load the LAMMPS output dump file into OVITO
     pipeline = import_file(lammps_output_path, multiple_frames=True)
+    
+    # Ensure the pipeline has frames
+    if pipeline.source.num_frames == 0:
+        print("Error: No frames in the pipeline.")
+        return
     
     # Access the last frame of the imported animation sequence
     last_frame = pipeline.source.num_frames - 1
     data = pipeline.compute(last_frame)
+    
+    # Ensure data is not empty
+    if data.particles.count == 0:
+        print("Error: No particles in the data.")
+        return
     
     # Add pipeline to scene
     pipeline.add_to_scene()
