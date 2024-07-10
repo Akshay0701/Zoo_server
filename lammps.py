@@ -13,7 +13,7 @@ from ovito.modifiers import ColorCodingModifier
 import math
 
 # Paths
-image_path = 'outputImage/inputImage.jpg'
+image_path = 'static/real_images48.jpg'
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
@@ -219,7 +219,7 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path):
     pipeline.add_to_scene()
     
     # Modify particle visualization settings
-    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), only_selected=True, start_value=0, end_value=5000))
+    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), only_selected=True, start_value=0, end_value=200))
     
     # Setup viewport for rendering
     vp = Viewport()
