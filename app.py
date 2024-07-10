@@ -41,19 +41,16 @@ def process_image():
     image_path = os.path.join('static', selected_image)
     
     # Define the command to run the external Python script
-    script_command = ['python3', 'lammps.py', selected_image]
+    script_command = ['python', 'lammps.py', image_path]
     
     # Run the script and wait for it to complete
     result = subprocess.run(script_command, capture_output=True, text=True)
     
     # Check if the script ran successfully
     if result.returncode != 0:
-        # Log error message
-        error_message = f"Script error: {result.stderr}"
-        app.logger.error(error_message)
-        return error_message
+        return f"Error: {result.stderr}"
     
-    return image_path
+    return redirect(url_for('show_image'))
 
 @app.route('/show_image')
 def show_image():
