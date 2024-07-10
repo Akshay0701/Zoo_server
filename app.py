@@ -52,6 +52,12 @@ def show_image():
     image_path = 'outputImage/final_image.png'
     return send_file(image_path, mimetype='image/png')
 
+@app.route('/binary_image')
+def show_image():
+    # Assuming 'outputImage/final_image.png' exists in your static folder binary_image
+    image_path = 'outputImage/binary_image.png'
+    return send_file(image_path, mimetype='image/png')
+
 @app.route('/pattern_generator')
 def pattern_generator():
     return render_template('pattern_generator.html')
