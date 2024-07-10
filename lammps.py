@@ -13,7 +13,7 @@ from ovito.modifiers import ColorCodingModifier
 import math
 
 # Paths
-image_path = 'static/real_images48.jpg'
+image_path = 'outputImage/inputImage.jpg'
 output_folder_path = 'outputImage'
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
