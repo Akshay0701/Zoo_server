@@ -133,6 +133,7 @@ def submit():
         selections = {}
         responses = []
         userID = str(uuid4())
+        user_age = request.form.get('age')
         for img in request.form:
             selection = request.form[img]
             selections[img] = selection
@@ -141,6 +142,7 @@ def submit():
             correct = 1 if answer == image_type else 0
             responses.append({
                 'ID': userID,
+                'UserAge': user_age,
                 'Image Name': img,
                 'AI/Real': image_type,
                 'Answer': answer,
