@@ -16,14 +16,7 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/lammps')
-def select_image():
-    ai_images, real_images = get_images()
-    selected_ai_images = random.sample(ai_images, 8)
-    selected_real_images = random.sample(real_images, 8)
-    images = selected_ai_images + selected_real_images
-    random.shuffle(images)
-    return render_template('animalImageLammp.html', images=images)
+
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
@@ -44,6 +37,15 @@ def show_image():
     # Assuming 'outputImage/final_image.png' exists in your static folder binary_image
     image_path = 'outputImage/final_image.png'
     return send_file(image_path, mimetype='image/png')
+
+@app.route('/lammps')
+def lammps():
+    ai_images, real_images = get_images()
+    selected_ai_images = random.sample(ai_images, 8)
+    selected_real_images = random.sample(real_images, 8)
+    images = selected_ai_images + selected_real_images
+    random.shuffle(images)
+    return render_template('animalImageLammp.html', images=images)
 
 @app.route('/binary_image')
 def binary_image():
@@ -175,8 +177,8 @@ def get_images():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host='0.0.0.0', port=8000)
+    app.run(debug=True)
+    # app.run(host='0.0.0.0', port=8000)
 
 
 
