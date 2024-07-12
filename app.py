@@ -10,17 +10,6 @@ import os
 import pandas as pd
 import logging
 
-# from lammps import generate_model, write_lammps_input, run_lammps_simulation, create_image_from_lammps_output
-
-# Paths
-output_folder_path = 'outputImage'
-binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
-lammps_data_path = os.path.join(output_folder_path, 'data.data')
-lammps_input_path = os.path.join(output_folder_path, 'input.in')
-lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
-ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
-
-
 app = Flask(__name__)
 
 @app.route('/')
