@@ -10,6 +10,7 @@ import os
 import pandas as pd
 import logging
 import time
+import threading
 
 app = Flask(__name__)
 app.config['TIMEOUT'] = 90  # Example: 90 seconds
@@ -17,6 +18,10 @@ app.config['TIMEOUT'] = 90  # Example: 90 seconds
 @app.route('/')
 def index():
     return render_template('index.html')
+
+def process_image_task(image_path, output_user_folder):
+    script_command = ['python3', 'lammps.py', image_path, output_user_folder]
+    subprocess.run(script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
@@ -27,11 +32,10 @@ def process_image():
     output_user_folder = os.path.join('outputImage', user_folder)
     os.makedirs(output_user_folder, exist_ok=True)
 
-    script_command = ['python3', 'lammps.py', image_path, output_user_folder]
+    # script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    # process = subprocess.Popen(script_command)
-    # process.wait()
-    time.sleep(35)
+    thread = threading.Thread(target=process_image_task, args=(image_path, output_user_folder))
+    thread.start()
     
     # Return the job ID immediately
     return redirect(url_for('show_image', user_folder="20424029"))
