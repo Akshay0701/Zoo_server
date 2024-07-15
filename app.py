@@ -44,6 +44,8 @@ def process_image():
 def show_image(user_folder):
     # Assuming 'outputImage/{user_folder}/final_image.png' exists
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
+    while not os.path.exists(image_path):
+        time.sleep(1)  # Check every second
     return send_file(image_path, mimetype='image/png')
 
 @app.route('/lammps')
