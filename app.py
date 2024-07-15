@@ -31,11 +31,9 @@ def process_image():
     # Define the command to run the external Python script (if needed)
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    # Run the script asynchronously
-    subprocess.Popen(script_command)
-
-    # Add a 3-minute delay
-    time.sleep(180)  # 180 seconds = 3 minutes
+   # Run the script asynchronously and wait for completion
+    process = subprocess.Popen(script_command)
+    process.wait()  # Wait for the subprocess to complete
     
     # Return the job ID immediately
     return redirect(url_for('show_image', user_folder=user_folder))
