@@ -34,6 +34,7 @@ def process_image():
    # Run the script asynchronously and wait for completion
     process = subprocess.Popen(script_command)
     process.wait()  # Wait for the subprocess to complete
+    time.sleep(150)
     
     # Return the job ID immediately
     return redirect(url_for('show_image', user_folder=user_folder))
