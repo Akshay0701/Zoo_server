@@ -174,7 +174,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
     # Decide at which atom you pull (change
     #     when you change 'NL' in 'long_pull.py')
     ################################################
-    run              2000
+    run              200
     """
     with open(lammps_input_path, 'w') as f:
         f.write(lammps_input_content)
