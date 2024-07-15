@@ -30,18 +30,12 @@ def process_image():
 
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    try:
-        process = subprocess.run(script_command)
+    process = subprocess.run(script_command)
 
-        time.sleep(100)  
-        
-        # Return the job ID immediately
-        return redirect(url_for('show_image', user_folder=user_folder))
+    time.sleep(100)  
     
-    except Exception as e:
-        # Handle any exceptions
-        error_message = f"Error processing image: {str(e)}"
-        return error_message, 500
+    # Return the job ID immediately
+    return redirect(url_for('show_image', user_folder=user_folder))
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
@@ -188,8 +182,8 @@ def get_images():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # app.run(host='0.0.0.0', port=8000)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
 
 
 
