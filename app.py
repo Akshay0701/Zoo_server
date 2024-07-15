@@ -27,15 +27,14 @@ def process_image():
     user_folder = str(uuid.uuid4())
     output_user_folder = os.path.join('outputImage', user_folder)
     os.makedirs(output_user_folder, exist_ok=True)
-    
-    # Define the command to run the external Python script (if needed)
+
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
     try:
-        # Run the script asynchronously and wait for completion
         process = subprocess.Popen(script_command)
+
+        time.sleep(250)  
         process.wait()  # Wait for the subprocess to complete
-        # time.sleep(150)  # Not necessary if you're waiting for process completion
         
         # Return the job ID immediately
         return redirect(url_for('show_image', user_folder=user_folder))
