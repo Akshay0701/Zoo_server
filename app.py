@@ -18,8 +18,6 @@ app.config['TIMEOUT'] = 90  # Example: 90 seconds
 def index():
     return render_template('index.html')
 
-
-
 @app.route('/process_image', methods=['POST'])
 def process_image():
     selected_image = request.form.get('selected_image')
@@ -31,11 +29,11 @@ def process_image():
 
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    process = subprocess.Popen(script_command)
-    process.wait()
+    # process = subprocess.Popen(script_command)
+    # process.wait()
     
     # Return the job ID immediately
-    return redirect(url_for('show_image', user_folder=user_folder))
+    return redirect(url_for('show_image', user_folder="20424029"))
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
