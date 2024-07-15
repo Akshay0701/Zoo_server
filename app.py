@@ -30,7 +30,7 @@ def process_image():
 
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    process = subprocess.Popen(script_command)
+    subprocess.Popen(script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     # Return the job ID immediately
     return redirect(url_for('show_image', user_folder=user_folder))
@@ -38,7 +38,7 @@ def process_image():
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
     # Assuming 'outputImage/{user_folder}/final_image.png' exists
-    time.sleep(200)
+    time.sleep(60)
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
