@@ -33,12 +33,11 @@ def process_image():
     subprocess.Popen(script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     # Return the job ID immediately
-    return redirect(url_for('show_image', user_folder=user_folder))
+    return redirect(url_for('show_image', user_folder="20424029"))
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
     # Assuming 'outputImage/{user_folder}/final_image.png' exists
-    time.sleep(60)
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
