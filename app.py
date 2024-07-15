@@ -31,7 +31,7 @@ def process_image():
     
     # process = subprocess.Popen(script_command)
     # process.wait()
-    time.sleep(25)
+    time.sleep(30)
     
     # Return the job ID immediately
     return redirect(url_for('show_image', user_folder="20424029"))
