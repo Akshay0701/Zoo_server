@@ -12,6 +12,7 @@ import logging
 import time
 
 app = Flask(__name__)
+app.config['TIMEOUT'] = 90  # Example: 90 seconds
 
 @app.route('/')
 def index():
@@ -30,15 +31,15 @@ def process_image():
 
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-    subprocess.Popen(script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(script_command)
+    process.wait()
     
     # Return the job ID immediately
-    return redirect(url_for('show_image', user_folder="20424029"))
+    return redirect(url_for('show_image', user_folder=user_folder))
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
     # Assuming 'outputImage/{user_folder}/final_image.png' exists
-    time.sleep(35)
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
