@@ -31,10 +31,9 @@ def process_image():
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
     try:
-        process = subprocess.Popen(script_command)
+        process = subprocess.run(script_command)
 
-        time.sleep(250)  
-        process.wait()  # Wait for the subprocess to complete
+        time.sleep(100)  
         
         # Return the job ID immediately
         return redirect(url_for('show_image', user_folder=user_folder))
