@@ -9,6 +9,7 @@ import io
 import os
 import pandas as pd
 import logging
+import time
 
 app = Flask(__name__)
 
@@ -22,20 +23,27 @@ def index():
 def process_image():
     selected_image = request.form.get('selected_image')
     image_path = os.path.join('static', selected_image)
+
+    user_folder = str(uuid.uuid4())
+    output_user_folder = os.path.join('outputImage', user_folder)
+    os.makedirs(output_user_folder, exist_ok=True)
     
-    # Define the command to run the external Python script
-    script_command = ['python3', 'lammps.py', image_path]
+    # Define the command to run the external Python script (if needed)
+    script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
     # Run the script asynchronously
     subprocess.Popen(script_command)
+
+    # Add a 3-minute delay
+    time.sleep(180)  # 180 seconds = 3 minutes
     
     # Return the job ID immediately
-    return redirect(url_for('show_image'))
+    return redirect(url_for('show_image', user_folder=user_folder))
 
-@app.route('/show_image')
-def show_image():
-    # Assuming 'outputImage/final_image.png' exists in your static folder binary_image
-    image_path = 'outputImage/final_image.png'
+@app.route('/show_image/<user_folder>')
+def show_image(user_folder):
+    # Assuming 'outputImage/{user_folder}/final_image.png' exists
+    image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
 @app.route('/lammps')

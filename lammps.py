@@ -16,11 +16,12 @@ import math
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Process an image to generate a LAMMPS model.')
 parser.add_argument('image_path', type=str, help='Path to the input image')
+parser.add_argument('output_user_folder', type=str, help='Path to the output_user_folder image')
 args = parser.parse_args()
 
 # Paths
 image_path = args.image_path
-output_folder_path = 'outputImage'
+output_folder_path = args.output_user_folder
 binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
 lammps_input_path = os.path.join(output_folder_path, 'input.in')
