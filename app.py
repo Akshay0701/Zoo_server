@@ -32,20 +32,27 @@ def process_image():
     output_user_folder = os.path.join('outputImage', user_folder)
     os.makedirs(output_user_folder, exist_ok=True)
 
-    # script_command = ['python3', 'lammps.py', image_path, output_user_folder]
-    
+    # Start the task in a new thread
     thread = threading.Thread(target=process_image_task, args=(image_path, output_user_folder))
     thread.start()
-    
-    # Return the job ID immediately
-    return redirect(url_for('show_image', user_folder="20424029"))
+
+    # Redirect to a route that will handle showing the image after processing
+    return redirect(url_for('show_image', user_folder=user_folder))
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
-    # Assuming 'outputImage/{user_folder}/final_image.png' exists
+    return render_template('show_image.html', user_folder=user_folder)
+
+@app.route('/check_image/<user_folder>')
+def check_image(user_folder):
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
-    while not os.path.exists(image_path):
-        time.sleep(1)  # Check every second
+    if os.path.exists(image_path):
+        return 'ready'
+    return 'processing'
+
+@app.route('/get_image/<user_folder>')
+def get_image(user_folder):
+    image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
 @app.route('/lammps')
