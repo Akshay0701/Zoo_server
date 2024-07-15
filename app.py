@@ -32,7 +32,7 @@ def process_image():
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
    # Run the script asynchronously and wait for completion
-    process = subprocess.Popen(script_command)
+    process = subprocess.run(script_command)
     process.wait()  # Wait for the subprocess to complete
     time.sleep(150)
     
