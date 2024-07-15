@@ -31,13 +31,19 @@ def process_image():
     # Define the command to run the external Python script (if needed)
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     
-   # Run the script asynchronously and wait for completion
-    process = subprocess.run(script_command)
-    process.wait()  # Wait for the subprocess to complete
-    time.sleep(150)
+    try:
+        # Run the script asynchronously and wait for completion
+        process = subprocess.Popen(script_command)
+        process.wait()  # Wait for the subprocess to complete
+        # time.sleep(150)  # Not necessary if you're waiting for process completion
+        
+        # Return the job ID immediately
+        return redirect(url_for('show_image', user_folder=user_folder))
     
-    # Return the job ID immediately
-    return redirect(url_for('show_image', user_folder=user_folder))
+    except Exception as e:
+        # Handle any exceptions
+        error_message = f"Error processing image: {str(e)}"
+        return error_message, 500
 
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
