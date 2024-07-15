@@ -38,6 +38,7 @@ def process_image():
 @app.route('/show_image/<user_folder>')
 def show_image(user_folder):
     # Assuming 'outputImage/{user_folder}/final_image.png' exists
+    time.sleep(35)
     image_path = os.path.join('outputImage', user_folder, 'final_image.png')
     return send_file(image_path, mimetype='image/png')
 
