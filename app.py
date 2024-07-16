@@ -78,11 +78,6 @@ def get_stress_image(user_folder):
     return send_from_directory(os.path.join('outputImage', user_folder), 'stress_field_image.png')
 
 
-@app.route('/get_image/<user_folder>')
-def get_image(user_folder):
-    image_path = os.path.join('outputImage', user_folder, 'final_image.png')
-    return send_file(image_path, mimetype='image/png')
-
 @app.route('/lammps')
 def lammps():
     ai_images, real_images = get_images()
