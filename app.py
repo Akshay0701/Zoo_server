@@ -53,13 +53,6 @@ def show_image(user_folder):
 
 @app.route('/check_image/<user_folder>')
 def check_image(user_folder):
-    image_path = os.path.join('outputImage', user_folder, 'final_image.png')
-    if os.path.exists(image_path):
-        return 'ready'
-    return 'processing'
-
-@app.route('/check_image/<user_folder>')
-def check_image(user_folder):
     image_path = os.path.join('outputImage', user_folder, 'combined_image.png')
     if os.path.exists(image_path):
         return 'ready'
