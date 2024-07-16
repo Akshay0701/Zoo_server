@@ -25,6 +25,16 @@
             0% { width: 0; }
             100% { width: 100%; }
         }
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .image-container img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -36,17 +46,24 @@
 
     <script>
         function checkImage() {
-            fetch('/check_image/{{ user_folder }}')
+            fetch(`/check_image/{{ user_folder }}`)
                 .then(response => response.text())
                 .then(status => {
                     if (status === 'ready') {
-                        // Image is ready, update the container
+                        // Images are ready, update the container
                         document.getElementById('image-container').innerHTML = `
-                            <h2>Processed Image</h2>
-                            <img src="/get_image/{{ user_folder }}" alt="Processed Image">
+                            <h2>Processed Images</h2>
+                            <div class="image-container">
+                                <h3>OVITO Image</h3>
+                                <img src="/get_ovito_image/{{ user_folder }}" alt="OVITO Image">
+                                <h3>Stress Field Image</h3>
+                                <img src="/get_stress_image/{{ user_folder }}" alt="Stress Field Image">
+                                <h3>Combined Image</h3>
+                                <img src="/get_image/{{ user_folder }}" alt="Combined Image">
+                            </div>
                         `;
                     } else {
-                        // Image is still processing, check again after 5 seconds
+                        // Images are still processing, check again after 5 seconds
                         setTimeout(checkImage, 5000);
                     }
                 });

@@ -2,7 +2,7 @@ import random
 import subprocess
 from uuid import uuid4
 import uuid
-from flask import Flask, render_template, send_file, jsonify, request, redirect, url_for
+from flask import Flask, render_template, send_file, jsonify, request, redirect, send_from_directory, url_for
 import numpy as np
 from PIL import Image, ImageDraw
 import io
@@ -57,6 +57,26 @@ def check_image(user_folder):
     if os.path.exists(image_path):
         return 'ready'
     return 'processing'
+
+@app.route('/check_image/<user_folder>')
+def check_image(user_folder):
+    image_path = os.path.join('outputImage', user_folder, 'combined_image.png')
+    if os.path.exists(image_path):
+        return 'ready'
+    return 'processing'
+
+@app.route('/get_image/<user_folder>')
+def get_image(user_folder):
+    return send_from_directory(os.path.join('outputImage', user_folder), 'combined_image.png')
+
+@app.route('/get_ovito_image/<user_folder>')
+def get_ovito_image(user_folder):
+    return send_from_directory(os.path.join('outputImage', user_folder), 'ovito_image.png')
+
+@app.route('/get_stress_image/<user_folder>')
+def get_stress_image(user_folder):
+    return send_from_directory(os.path.join('outputImage', user_folder), 'stress_field_image.png')
+
 
 @app.route('/get_image/<user_folder>')
 def get_image(user_folder):
