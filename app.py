@@ -23,10 +23,18 @@ def process_image_task(image_path, output_user_folder):
     script_command = ['python3', 'lammps.py', image_path, output_user_folder]
     subprocess.run(script_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+@app.route('/get_animal_images', methods=['GET'])
+def get_animal_images():
+    animal = request.args.get('animal')
+    folder_path = os.path.join('static', animal)
+    images = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    return render_template('select_image_lammps.html', animal=animal, images=images)
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
     selected_image = request.form.get('selected_image')
-    image_path = os.path.join('static', selected_image)
+    animal_choice = request.form.get('animal_choice')
+    image_path = os.path.join('static', animal_choice, selected_image)
 
     user_folder = str(uuid.uuid4())
     output_user_folder = os.path.join('outputImage', user_folder)
@@ -192,10 +200,16 @@ def get_images():
     real_images = [img for img in os.listdir(static_dir) if img.startswith('real_images')]
     return ai_images, real_images
 
+def get_images():
+    static_dir = 'static'
+    ai_images = [img for img in os.listdir(static_dir) if img.startswith('ai_images')]
+    real_images = [img for img in os.listdir(static_dir) if img.startswith('real_images')]
+    return ai_images, real_images
+
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(debug=True)
+    # app.run(host='0.0.0.0', port=8000, debug=True)
 
 
 
