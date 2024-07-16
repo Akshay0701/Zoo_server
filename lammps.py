@@ -26,7 +26,9 @@ binary_image_path = os.path.join(output_folder_path, 'binary_image.png')
 lammps_data_path = os.path.join(output_folder_path, 'data.data')
 lammps_input_path = os.path.join(output_folder_path, 'input.in')
 lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
-ovito_image_path = os.path.join(output_folder_path, 'final_image.png')
+ovito_image_path = os.path.join(output_folder_path, 'configuration.png')
+stress_field_path = os.path.join(output_folder_path, 'stress_field.png')
+combined_image_path = os.path.join(output_folder_path, 'stitched_images.png')
 
 # Create output directories if they don't exist
 os.makedirs(output_folder_path, exist_ok=True)
@@ -34,6 +36,8 @@ os.makedirs(os.path.dirname(binary_image_path), exist_ok=True)
 
 # Initialize QApplication for offscreen rendering
 app = QApplication(sys.argv)
+if app is None:
+        app = QApplication(sys.argv)
 
 # Step 1: Image Processing and Model Generation
 def generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path):
@@ -104,77 +108,76 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
 # Step 2: Writing LAMMPS Input Script
 def write_lammps_input(lammps_input_path, lammps_data_path):
     lammps_input_content = f"""
+   ################################################
+   # INPUT FILE
+   ################################################
+   # Deform a single layer metal polymer composite film
+   # Zhao Qin 2023 @ SU
+   ################################################
+   # Units, angle, tensile parameters etc.
+   ################################################
+   boundary p p p
+   units       micro
+   atom_style      bond
+   timestep    0.002
+   dimension       3
+   read_data   {lammps_data_path}
+   neighbor    0.2 bin
+   neigh_modify    every 100 delay 100
+   pair_style soft 0.8
+   pair_coeff * * 1e7 0.8
+   bond_style      morse
+   bond_coeff      1 1028.2 25.13 0.373
+   bond_coeff      2 268.7 4.49 0.373
+   bond_coeff      3 648.45 14.81 0.373
+   ################################################
+   # Boundary conditions 
+   ################################################
+   region          1 block INF INF INF 2.488 INF  INF units box
+   group           lower region 1
+   region          2 block   INF INF  93  INF INF INF units box    
+   group           upper region 2
+   region          3 block   INF 2.488 INF INF INF INF units box
+   group           left  region 3
+   region          4 block   93 INF INF INF INF INF units box
+   group           right region 4
+   group           boundary union lower upper
+   group           mobile subtract all boundary
+   min_style       cg
+   min_modify      dmax 0.01
+   minimize        0.0 0.0 200 200
+   compute         peratom all stress/atom NULL
+   fix 999 all ave/atom 1 10 10 c_peratom[1] c_peratom[1] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
+   variable mises atom sqrt((f_999[1]-f_999[2])*(f_999[1]-f_999[2])+(f_999[2]-f_999[3])*(f_999[2]-f_999[3])+(f_999[1]-f_999[3])*(f_999[1]-f_999[3])+6*(f_999[4]*f_999[4]+f_999[5]*f_999[5]+f_999[6]*f_999[6]))
+   dump 400 all custom 100 {lammps_output_path} type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
+   velocity        all create 300.00 376847
+   fix             initnve         all nve
+   fix             initcont  all temp/rescale 100 300.0 300.0  10.  0.5
+   thermo          100
+   velocity        upper set NULL 0.0 NULL units box
+   velocity        lower set NULL 0.0 NULL units box
+   fix             2 upper setforce NULL 0.00 NULL
+   fix             21 lower setforce NULL 0.00 NULL
+   thermo_style    custom step temp etotal
+   thermo_modify   flush yes 
+   ################################################
+   # Relax structure for 100 steps
+   ################################################
+   run     100
+   # NOW: One-step tensile deformation applied
     ################################################
-    # INPUT FILE
-    ################################################
-    # Deform a single layer metal polymer composite film
-    # Zhao Qin 2023 @ SU
-    ################################################
-    # Units, angle, tensile parameters etc.
-    ################################################
-    boundary p p p
-    units		micro
-    atom_style      bond
-    timestep	0.002
-    dimension       3
-    read_data	{lammps_data_path}
-    neighbor	0.2 bin
-    neigh_modify    every 100 delay 100
-    pair_style soft 0.8
-    pair_coeff * * 1e7 0.8
-    bond_style      morse
-    bond_coeff      1 1028.2 25.13 0.373
-    bond_coeff      2 268.7 4.49 0.373
-    bond_coeff      3 648.45 14.81 0.373
-    ################################################
-    # Boundary conditions 
-    ################################################
-    region          1 block INF INF INF 2.488 INF  INF units box
-    group           lower region 1
-    region          2 block   INF INF  93  INF INF INF units box    
-    group           upper region 2
-    region          3 block   INF 2.488 INF INF INF INF units box
-    group           left  region 3
-    region          4 block   INF INF 93 INF INF INF units box
-    group           right region 4
-    group           boundary union lower upper
-    group           mobile subtract all boundary
-    min_style       cg
-    min_modify      dmax 0.01
-    minimize        0.0 0.0 2000 2000
-    compute         peratom all stress/atom NULL
-    fix 999 all ave/atom 10 5 100 c_peratom[1] c_peratom[1] c_peratom[3] c_peratom[4] c_peratom[5] c_peratom[6]
-    variable mises atom sqrt((f_999[1]-f_999[2])*(f_999[1]-f_999[2])+(f_999[2]-f_999[3])*(f_999[2]-f_999[3])+(f_999[1]-f_999[3])*(f_999[1]-f_999[3])+6*(f_999[4]*f_999[4]+f_999[5]*f_999[5]+f_999[6]*f_999[6]))
-    dump 400 all custom 500 {lammps_output_path} type x y z v_mises f_999[1] f_999[2] f_999[3] f_999[4] f_999[5] f_999[6]
-    velocity        all create 300.00 376847
-    fix             initnve         all nve
-    fix             initcont  all temp/rescale 100 300.0 300.0  10.  0.5
-    thermo          100
-    velocity        upper set NULL 0.0 NULL units box
-    velocity        lower set NULL 0.0 NULL units box
-    fix             2 upper setforce NULL 0.00 NULL
-    fix             21 lower setforce NULL 0.00 NULL
-    thermo_style	custom step temp etotal
-    thermo_modify   flush yes 
-    ################################################
-    # Relax structure for 200000 steps
-    ################################################
-    run		10
-    ################################################
-    # NOW: Loading loop applied
-    ################################################
-    ##unfix wallhi
-    compute         max_y all reduce max y
-    compute         min_y all reduce min y
-    fix      stretch all deform 100 y erate 0.0001
-    thermo_style    custom step f_2[2] f_21[2] c_max_y c_min_y temp etotal
+    fix         stretch all deform 1 y delta 0.0 50.0 units box
+    thermo_style    custom step f_2[2] f_21[2] temp etotal
     thermo_modify   flush yes
-    thermo          1000
-    ###############################################m
-    # Decide at which atom you pull (change
-    #     when you change 'NL' in 'long_pull.py')
+    thermo          100
+    run             1
     ################################################
-    run              2000
+    # Relax structure after deformation
+    ################################################
+    minimize        0.0 0.0 2000 2000
+    thermo_style    custom step f_2[2] f_21[2] temp etotal
+    thermo_modify   flush yes
+    run             2000
     """
     with open(lammps_input_path, 'w') as f:
         f.write(lammps_input_content)
