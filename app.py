@@ -53,10 +53,15 @@ def show_image(user_folder):
 
 @app.route('/check_image/<user_folder>')
 def check_image(user_folder):
-    image_path = os.path.join('outputImage', user_folder, 'configuration.png')
-    if os.path.exists(image_path):
-        return 'ready'
-    return 'processing'
+    required_images = ['configuration.png', 'stitched_images.png', 'stress_field.png']
+    image_dir = os.path.join('outputImage', user_folder)
+    
+    for image in required_images:
+        image_path = os.path.join(image_dir, image)
+        if not os.path.exists(image_path):
+            return 'processing'
+    
+    return 'ready'
 
 @app.route('/get_image/<user_folder>')
 def get_image(user_folder):
