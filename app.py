@@ -53,22 +53,22 @@ def show_image(user_folder):
 
 @app.route('/check_image/<user_folder>')
 def check_image(user_folder):
-    image_path = os.path.join('outputImage', user_folder, 'combined_image.png')
+    image_path = os.path.join('outputImage', user_folder, 'configuration.png')
     if os.path.exists(image_path):
         return 'ready'
     return 'processing'
 
 @app.route('/get_image/<user_folder>')
 def get_image(user_folder):
-    return send_from_directory(os.path.join('outputImage', user_folder), 'combined_image.png')
+    return send_from_directory(os.path.join('outputImage', user_folder), 'configuration.png')
 
 @app.route('/get_ovito_image/<user_folder>')
 def get_ovito_image(user_folder):
-    return send_from_directory(os.path.join('outputImage', user_folder), 'ovito_image.png')
+    return send_from_directory(os.path.join('outputImage', user_folder), 'stitched_images.png')
 
 @app.route('/get_stress_image/<user_folder>')
 def get_stress_image(user_folder):
-    return send_from_directory(os.path.join('outputImage', user_folder), 'stress_field_image.png')
+    return send_from_directory(os.path.join('outputImage', user_folder), 'stress_field.png')
 
 
 @app.route('/lammps')
