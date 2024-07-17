@@ -49,7 +49,7 @@
             margin: 0 auto;
             display: block;
         }
-        input[type="submit"] {
+        input[type="submit"], input[type="button"] {
             padding: 12px 24px;
             font-size: 18px;
             cursor: pointer;
@@ -61,7 +61,7 @@
             margin-top: 20px;
             width: 100%;
         }
-        input[type="submit"]:hover {
+        input[type="submit"]:hover, input[type="button"]:hover {
             background-color: #0056b3;
         }
         #pattern-container {
@@ -71,31 +71,10 @@
             padding: 10px;
             position: relative;
         }
-
-        #pattern-img {
+        #pattern-canvas {
             width: 100%;
             border-radius: 8px;
             position: relative;
-        }
-
-        .loader {
-            display: none;
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         @media screen and (max-width: 799px) {
             .container {
@@ -111,67 +90,171 @@
 <body>
     <div class="container">
         <div class="form-container">
-            <h1>Zebra Pattern Generator</h1>
+            <h1>Turing Pattern Generator</h1>
             <form id="pattern-form">
                 <label for="Du">Du:</label>
-                <input type="range" id="Du" name="Du" min="0.10" max="0.25" step="0.0001" value="0.10">
-                <span id="Du-value">0.10</span>
+                <input type="range" id="Du" name="Du" min="0.10" max="0.25" step="0.0001" value="0.16">
+                <span id="Du-value">0.16</span>
 
                 <label for="Dv">Dv:</label>
-                <input type="range" id="Dv" name="Dv" min="0.05" max="0.1" step="0.0001" value="0.05">
-                <span id="Dv-value">0.05</span>
+                <input type="range" id="Dv" name="Dv" min="0.05" max="0.1" step="0.0001" value="0.08">
+                <span id="Dv-value">0.08</span>
 
                 <label for="F">F:</label>
-                <input type="range" id="F" name="F" min="0.02" max="0.04" step="0.0001" value="0.02">
-                <span id="F-value">0.02</span>
+                <input type="range" id="F" name="F" min="0.02" max="0.04" step="0.0001" value="0.035">
+                <span id="F-value">0.035</span>
 
                 <label for="k">k:</label>
-                <input type="range" id="k" name="k" min="0.055" max="0.065" step="0.0001" value="0.055">
-                <span id="k-value">0.055</span>
+                <input type="range" id="k" name="k" min="0.055" max="0.065" step="0.0001" value="0.060">
+                <span id="k-value">0.060</span>
 
-                <input type="submit" value="Generate Pattern">
+                <label for="speed">Animation Speed:</label>
+                <input type="range" id="speed" name="speed" min="100" max="500" value="250">
+                <span id="speed-value">250</span>
+
+                <input type="button" id="reset-btn" value="Reset">
             </form>
         </div>
         <div id="pattern-container">
-            <div id="loader" class="loader"></div>
-            <img id="pattern-img" src="" alt="Zebra Pattern">
+            <canvas id="pattern-canvas"></canvas>
         </div>
     </div>
 
     <script>
-        // Update pattern when form is submitted
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const form = new FormData(this);
-            const loader = document.getElementById('loader');
-            const patternImg = document.getElementById('pattern-img');
+        const canvas = document.getElementById('pattern-canvas');
+        const ctx = canvas.getContext('2d');
+        const size = 128;
+        canvas.width = size;
+        canvas.height = size;
 
-            // Show loading spinner
-            loader.style.display = 'block';
-            patternImg.style.display = 'none';
+        let Du = 0.16, Dv = 0.08, F = 0.035, k = 0.060;
+        const u = new Float32Array(size * size).fill(1);
+        const v = new Float32Array(size * size).fill(0);
+        const r = 20;
 
-            fetch('/generate_zebra_pattern?' + new URLSearchParams(form))
-                .then(response => response.blob())
-                .then(blob => {
-                    const imgUrl = URL.createObjectURL(blob);
-                    patternImg.src = imgUrl;
-                    patternImg.onload = function() {
-                        // Hide loading spinner
-                        loader.style.display = 'none';
-                        patternImg.style.display = 'block';
-                    };
-                });
+        for (let i = size / 2 - r; i < size / 2 + r; i++) {
+            for (let j = size / 2 - r; j < size / 2 + r; j++) {
+                u[i * size + j] = 0.50;
+                v[i * size + j] = 0.25;
+            }
+        }
+
+        function laplacian(array, i, j) {
+            return (
+                array[((i + 1) % size) * size + j] +
+                array[((i - 1 + size) % size) * size + j] +
+                array[i * size + (j + 1) % size] +
+                array[i * size + (j - 1 + size) % size] -
+                4 * array[i * size + j]
+            );
+        }
+
+        function update() {
+            const u2 = new Float32Array(u);
+            const v2 = new Float32Array(v);
+
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const index = i * size + j;
+                    const Lu = laplacian(u, i, j);
+                    const Lv = laplacian(v, i, j);
+                    const uvv = u[index] * v[index] * v[index];
+
+                    u2[index] += Du * Lu - uvv + F * (1 - u[index]);
+                    v2[index] += Dv * Lv + uvv - (F + k) * v[index];
+                }
+            }
+
+            u.set(u2);
+            v.set(v2);
+        }
+
+        function draw() {
+            const imageData = ctx.createImageData(size, size);
+            const data = imageData.data;
+
+            for (let i = 0; i < size * size; i++) {
+                const value = Math.floor((1 - u[i]) * 255);
+                const pixelOffset = i * 4;
+
+                data[pixelOffset] = value;
+                data[pixelOffset + 1] = value;
+                data[pixelOffset + 2] = value;
+                data[pixelOffset + 3] = 255;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        let animationSpeed = 50; // Default speed
+        let animationInterval; // Variable to hold animation interval
+
+        function animate() {
+            update();
+            draw();
+        }
+
+        function startAnimation() {
+            if (animationInterval) clearInterval(animationInterval);
+            animationInterval = setInterval(animate, 1000 / animationSpeed);
+        }
+
+        function stopAnimation() {
+            if (animationInterval) clearInterval(animationInterval);
+        }
+
+        document.getElementById('pattern-form').addEventListener('input', function(event) {
+            if (event.target.id === 'Du') Du = parseFloat(event.target.value);
+            if (event.target.id === 'Dv') Dv = parseFloat(event.target.value);
+            if (event.target.id === 'F') F = parseFloat(event.target.value);
+            if (event.target.id === 'k') k = parseFloat(event.target.value);
+            if (event.target.id === 'speed') {
+                animationSpeed = parseInt(event.target.value);
+                document.getElementById('speed-value').textContent = animationSpeed;
+                startAnimation(); // Restart animation with new speed
+            }
+            document.getElementById(`${event.target.id}-value`).textContent = event.target.value;
         });
 
-        // Update value display on slider change
-        document.querySelectorAll('input[type="range"]').forEach(function(slider) {
-            const valueDisplay = document.getElementById(`${slider.id}-value`);
-            valueDisplay.textContent = slider.value;
-
-            slider.addEventListener('input', function() {
-                valueDisplay.textContent = this.value;
-            });
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            Du = 0.16;
+            Dv = 0.08;
+            F = 0.035;
+            k = 0.060;
+            animationSpeed = 50;
+            document.getElementById('Du').value = Du.toFixed(4);
+            document.getElementById('Dv').value = Dv.toFixed(4);
+            document.getElementById('F').value = F.toFixed(4);
+            document.getElementById('k').value = k.toFixed(4);
+            document.getElementById('speed').value = animationSpeed;
+            document.getElementById('Du-value').textContent = Du.toFixed(4);
+            document.getElementById('Dv-value').textContent = Dv.toFixed(4);
+            document.getElementById('F-value').textContent = F.toFixed(4);
+            document.getElementById('k-value').textContent = k.toFixed(4);
+            document.getElementById('speed-value').textContent = animationSpeed;
+            stopAnimation(); // Stop current animation
+            clearCanvas(); // Clear the canvas
+            resetSimulation(); // Reset simulation data
+            startAnimation(); // Start animation from the beginning
         });
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, size, size);
+        }
+
+        function resetSimulation() {
+            u.fill(1);
+            v.fill(0);
+            for (let i = size / 2 - r; i < size / 2 + r; i++) {
+                for (let j = size / 2 - r; j < size / 2 + r; j++) {
+                    u[i * size + j] = 0.50;
+                    v[i * size + j] = 0.25;
+                }
+            }
+        }
+
+        startAnimation(); // Start initial animation
+
     </script>
 </body>
 </html>
