@@ -23,10 +23,8 @@
             width: 100%;
             height: 100%;
             background: url('https://png.pngtree.com/background/20210717/original/pngtree-jungle-simple-cute-cartoon-animal-background-picture-image_1439315.jpg') no-repeat center center fixed;
-            /* Replace with your image URL */
             background-size: cover;
             filter: blur(10px);
-            /* Apply blur effect */
             z-index: -1;
         }
 
@@ -37,11 +35,9 @@
             max-width: 1200px;
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.8);
-            /* Semi-transparent white */
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            /* Apply blur effect */
         }
 
         h1 {
@@ -68,6 +64,7 @@
             overflow: hidden;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         .image-box img {
@@ -81,58 +78,8 @@
             transform: scale(1.05);
         }
 
-        .options {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-
-        .toggle-switch input {
-            display: none;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 30px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: #007bff;
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(30px);
-        }
-
-        .toggle-switch-label {
-            margin-top: 10px;
-            font-size: 1em;
-            color: #555;
+        .image-box.selected {
+            border: 4px solid #007bff;
         }
 
         .btn {
@@ -159,8 +106,8 @@
             <input type="hidden" name="animal_choice" value="{{ animal }}">
             <div class="image-grid">
                 {% for image in images %}
-                <div class="image-box">
-                    <img src="{{ url_for('static', filename=animal + '/' + image) }}" alt="{{ image }}" onclick="selectImage('{{ image }}')">
+                <div class="image-box" onclick="selectImage('{{ image }}', this)">
+                    <img src="{{ url_for('static', filename=animal + '/' + image) }}" alt="{{ image }}">
                     <input type="radio" id="image{{ loop.index }}" name="selected_image" value="{{ image }}" style="display: none;" required>
                 </div>
                 {% endfor %}
@@ -169,8 +116,15 @@
         </form>
     </div>
     <script>
-        function selectImage(image) {
+        function selectImage(image, element) {
+            // Deselect previously selected image
+            const previouslySelected = document.querySelector('.image-box.selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('selected');
+            }
+            // Select new image
             document.querySelector(`input[value="${image}"]`).checked = true;
+            element.classList.add('selected');
         }
     </script>
 </body>
