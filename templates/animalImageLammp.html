@@ -102,19 +102,19 @@
         <form action="{{ url_for('get_animal_images') }}" method="get" id="animalForm">
             <div id="initialChoices" class="image-grid">
                 <div class="image-box">
-                    <img src="{{ url_for('static', filename='tiger/00001.png') }}" alt="Cheetah" onclick="selectAnimal('cheetah')">
+                    <img src="{{ url_for('static', filename='real_images7.avif') }}" alt="Cheetah" onclick="selectAnimal('cheetah')">
                 </div>
                 <div class="image-box">
-                    <img src="{{ url_for('static', filename='leopard/00001.png') }}" alt="Tiger" onclick="selectAnimal('tiger')">
+                    <img src="{{ url_for('static', filename='real_images51.jpg') }}" alt="Tiger" onclick="selectAnimal('tiger')">
                 </div>
                 <div class="image-box">
-                    <img src="{{ url_for('static', filename='giraffe/00001.png') }}" alt="Zebra" onclick="selectAnimal('zebra')">
+                    <img src="{{ url_for('static', filename='zebraimage.jpg') }}" alt="Zebra" onclick="selectAnimal('zebra')">
                 </div>
                 <div class="image-box">
-                    <img src="{{ url_for('static', filename='zebra/00001.png') }}" alt="Giraffe" onclick="selectAnimal('giraffe')">
+                    <img src="{{ url_for('static', filename='real_images11.jpeg') }}" alt="Giraffe" onclick="selectAnimal('giraffe')">
                 </div>
                 <div class="image-box">
-                    <img src="{{ url_for('static', filename='cheetah/00001.png') }}" alt="Leopard" onclick="selectAnimal('leopard')">
+                    <img src="{{ url_for('static', filename='leopardimage.avif') }}" alt="Leopard" onclick="selectAnimal('leopard')">
                 </div>
             </div>
             <input type="hidden" name="animal" id="animalChoice">
