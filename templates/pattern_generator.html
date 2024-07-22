@@ -10,7 +10,6 @@
             margin: 0;
             padding: 20px;
             position: relative;
-            overflow: hidden;
         }
 
         body::before {
@@ -25,6 +24,7 @@
             filter: blur(10px);
             z-index: -1;
         }
+
         .container {
             margin: 20px auto;
             padding: 20px;
@@ -36,9 +36,12 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: flex-start;
+            position: relative;
+            z-index: 1;
         }
         .form-container {
-            width: 45%;
+            width: 100%;
+            max-width: 45%;
             padding: 10px;
         }
         h1 {
@@ -74,13 +77,14 @@
             margin-top: 20px;
             width: 100%;
         }
-        input[type="submit"]:hover, input[type="button"]:hover {
+        input[type="submit"]:hover, button:hover {
             background-color: #0056b3;
         }
         #pattern-container {
             margin-top: 30px;
             text-align: center;
-            width: 45%;
+            width: 100%;
+            max-width: 45%;
             padding: 10px;
             position: relative;
         }
@@ -96,9 +100,18 @@
             }
             .form-container, #pattern-container {
                 width: 100%;
+                max-width: 100%;
             }
         }
-    </style>
+        .info-container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>  
 </head>
 <body>
     <div class="container">
@@ -132,6 +145,35 @@
             <canvas id="pattern-canvas"></canvas>
         </div>
     </div>
+      
+    <div class="info-container">
+        <h2>Governing Equation and Parameters</h2>
+        <p>
+            The pattern generation is based on the reaction-diffusion model described by the following equations:
+        </p>
+        <p>
+            <strong>du/dt = Du * ∇²u - uv² + F * (1 - u)</strong><br>
+            <strong>dv/dt = Dv * ∇²v + uv² - (F + k) * v</strong>
+        </p>
+        <p>
+            Here, u and v represent the concentration of two chemicals over time and space.
+        </p>
+        <ul>
+            <li><strong>Du (Diffusion rate of u):</strong> Controls the spread of the chemical u. Unit: cm²/s</li>
+            <li><strong>Dv (Diffusion rate of v):</strong> Controls the spread of the chemical v. Unit: cm²/s</li>
+            <li><strong>F (Feed rate):</strong> Controls the rate at which u is supplied to the system. Unit: 1/s</li>
+            <li><strong>k (Kill rate):</strong> Controls the rate at which v is removed from the system. Unit: 1/s</li>
+        </ul>
+        <p>
+            Changing these parameters affects the pattern formation as follows:
+        </p>
+        <ul>
+            <li>Increasing Du or Dv generally smoothens the pattern, making it more diffusive.</li>
+            <li>Higher F values speed up the pattern formation, resulting in smaller and more numerous features.</li>
+            <li>Higher k values tend to create more complex and denser patterns.</li>
+        </ul>
+    </div>
+
 
     <script>
         const canvas = document.getElementById('pattern-canvas');
@@ -234,7 +276,7 @@
             Dv = 0.08;
             F = 0.035;
             k = 0.060;
-            animationSpeed = 50;
+            animationSpeed = 250;
             document.getElementById('Du').value = Du.toFixed(4);
             document.getElementById('Dv').value = Dv.toFixed(4);
             document.getElementById('F').value = F.toFixed(4);
