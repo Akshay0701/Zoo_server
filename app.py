@@ -174,6 +174,8 @@ def submit():
         userID = str(uuid4())
         user_age = request.form.get('age')
         for img in request.form:
+            if img == 'age':
+                continue
             selection = request.form[img]
             selections[img] = selection
             image_type = 1 if 'real' in img else 0  # 1 for real, 0 for AI
