@@ -56,6 +56,8 @@
     <h1>Lammps Processing</h1>
     <div class="status-container" id="status-container">
         <p>Processing your image. Please wait...</p>
+    </div>
+    <div class="bar-container" id="bar-container">
         <div class="loading-bar-container">
             <div class="loading-bar" id="progress-bar"></div>
         </div>
@@ -102,6 +104,9 @@
                     updateProgressBar(status);
                     if (status !== 'Completed') {
                         // Check status again after 5 seconds if not completed
+                        document.getElementById('status-container').innerHTML = `
+                            <p>${status}</p>
+                        `;
                         setTimeout(checkStatus, 5000);
                         
                     } else {
