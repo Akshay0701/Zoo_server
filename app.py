@@ -27,7 +27,11 @@ def process_image_task(image_path, output_user_folder):
 def get_animal_images():
     animal = request.args.get('animal')
     folder_path = os.path.join('static', animal)
+    
+    # Get all images and limit to the first 16
     images = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    images = images[:16]  # Limit to the first 16 images
+
     return render_template('select_image_lammps.html', animal=animal, images=images)
 
 @app.route('/process_image', methods=['POST'])
@@ -63,7 +67,7 @@ def check_image(user_folder):
     
     return 'ready'
 
-@app.route('/get_status/<user_folder>', methods=['GET'])
+@app.route('/get_status/<user_folder>')
 def get_status(user_folder):
     state_file_path = os.path.join('output', user_folder, 'state.txt')
     with open(state_file_path, 'r') as state_file:
