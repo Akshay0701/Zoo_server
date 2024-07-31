@@ -5,20 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Processing</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        h1 {
+            color: #333;
+        }
         .loading-bar {
             width: 100%;
+            max-width: 400px;
             height: 30px;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
             margin-top: 20px;
             position: relative;
-            overflow: hidden;
         }
         .loading-bar div {
             height: 100%;
             width: 0;
-            background-color: #4caf50;
-            position: absolute;
+            background-color: #76c7c0;
+            border-radius: 15px;
             animation: loading 2s linear infinite;
         }
         @keyframes loading {
@@ -35,44 +50,41 @@
             max-width: 100%;
             margin-top: 20px;
         }
+        .status-container p {
+            margin: 0;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>Lammps Processing</h1>
-    <div id="status-container">
+    <div class="status-container" id="status-container">
         <p>Processing your image. Please wait...</p>
         <div class="loading-bar"><div></div></div>
     </div>
-    <div id="image-container"></div>
+    <div class="image-container" id="image-container"></div>
 
     <script>
         function checkStatus() {
             fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
                 .then(status => {
-                    document.getElementById('status-container').innerHTML = `
-                        <p>${status}</p>
-                        <div class="loading-bar"><div></div></div>
-                    `;
-                    
                     if (status !== 'Completed') {
+                        document.getElementById('status-container').innerHTML = `
+                            <p>Processing your image. Please wait...</p>
+                            <div class="loading-bar"><div></div></div>
+                        `;
                         // Check status again after 5 seconds if not completed
                         setTimeout(checkStatus, 5000);
                     } else {
-                        // Update image container when processing is completed
+                        document.getElementById('status-container').innerHTML = `
+                            <p>Processing Completed!</p>
+                        `;
                         document.getElementById('image-container').innerHTML = `
                             <h2>Processed Images</h2>
                             <div class="image-container">
                                 <h3>OVITO Image</h3>
                                 <img src="/get_ovito_image/{{ user_folder }}" alt="OVITO Image">
-                            </div>
-                            <div class="image-container">
-                                <h3>Stress Field</h3>
-                                <img src="/get_stress_field/{{ user_folder }}" alt="Stress Field">
-                            </div>
-                            <div class="image-container">
-                                <h3>Combined Image</h3>
-                                <img src="/get_combined_image/{{ user_folder }}" alt="Combined Image">
                             </div>
                         `;
                     }
