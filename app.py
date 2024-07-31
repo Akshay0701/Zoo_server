@@ -63,6 +63,13 @@ def check_image(user_folder):
     
     return 'ready'
 
+@app.route('/get_status/<user_folder>', methods=['GET'])
+def get_status(user_folder):
+    state_file_path = os.path.join('output', user_folder, 'state.txt')
+    with open(state_file_path, 'r') as state_file:
+        status = state_file.read().strip()
+    return status
+
 @app.route('/get_image/<user_folder>')
 def get_image(user_folder):
     return send_from_directory(os.path.join('outputImage', user_folder), 'configuration.png')

@@ -34,6 +34,7 @@ lammps_output_path = os.path.join(output_folder_path, 'dump_y.stress')
 ovito_image_path = os.path.join(output_folder_path, 'configuration.png')
 stress_field_path = os.path.join(output_folder_path, 'stress_field.png')
 combined_image_path = os.path.join(output_folder_path, 'stitched_images.png')
+state_file_path = os.path.join(output_folder_path, 'state.txt')
 
 # Create output directories if they don't exist
 os.makedirs(output_folder_path, exist_ok=True)
@@ -44,8 +45,14 @@ app = QApplication(sys.argv)
 if app is None:
         app = QApplication(sys.argv)
 
+# Function to update state file
+def update_state(state_file_path, message):
+    with open(state_file_path, 'w') as state_file:
+        state_file.write(message)
+
 # Step 1: Image Processing and Model Generation
 def generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path):
+    update_state(state_file_path, "Step 1: Image Processing and Model Generation")
     img = Image.open(image_path).convert('L')
     img_resized = img.resize((256, 256), Image.Resampling.LANCZOS)
     grayImage = np.array(img_resized)
@@ -112,6 +119,7 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
 
 # Step 2: Writing LAMMPS Input Script
 def write_lammps_input(lammps_input_path, lammps_data_path):
+    update_state(state_file_path, "Step 2: Writing LAMMPS Input Script")
     lammps_input_content = f"""
    ################################################
    # INPUT FILE
@@ -189,6 +197,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
 
 # Step 3: Running LAMMPS Simulation
 def run_lammps_simulation(lammps_input_path, output_folder_path):
+    update_state(state_file_path, "Step 4: Creating Images from LAMMPS Output")
     run_script = f"""
     #!/bin/bash
     #
@@ -208,6 +217,7 @@ def run_lammps_simulation(lammps_input_path, output_folder_path):
     subprocess.run(run_script_path, shell=True)
 
 def create_image_from_lammps_output(lammps_output_path, ovito_image_path, stress_field_path, combined_image_path):
+    update_state(state_file_path, "Step 4: Creating Images from LAMMPS Output")
     # Load the LAMMPS output dump file into OVITO
     pipeline = import_file(lammps_output_path, multiple_frames=True)
     

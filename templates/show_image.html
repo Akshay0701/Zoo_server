@@ -39,34 +39,48 @@
 </head>
 <body>
     <h1>Lammps Processing</h1>
-    <div id="image-container">
+    <div id="status-container">
         <p>Processing your image. Please wait...</p>
         <div class="loading-bar"><div></div></div>
     </div>
+    <div id="image-container"></div>
 
     <script>
-        function checkImage() {
-            fetch(`/check_image/{{ user_folder }}`)
+        function checkStatus() {
+            fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
                 .then(status => {
-                    if (status === 'ready') {
-                        // Images are ready, update the container
+                    document.getElementById('status-container').innerHTML = `
+                        <p>${status}</p>
+                        <div class="loading-bar"><div></div></div>
+                    `;
+                    
+                    if (status !== 'Completed') {
+                        // Check status again after 5 seconds if not completed
+                        setTimeout(checkStatus, 5000);
+                    } else {
+                        // Update image container when processing is completed
                         document.getElementById('image-container').innerHTML = `
                             <h2>Processed Images</h2>
                             <div class="image-container">
                                 <h3>OVITO Image</h3>
                                 <img src="/get_ovito_image/{{ user_folder }}" alt="OVITO Image">
                             </div>
+                            <div class="image-container">
+                                <h3>Stress Field</h3>
+                                <img src="/get_stress_field/{{ user_folder }}" alt="Stress Field">
+                            </div>
+                            <div class="image-container">
+                                <h3>Combined Image</h3>
+                                <img src="/get_combined_image/{{ user_folder }}" alt="Combined Image">
+                            </div>
                         `;
-                    } else {
-                        // Images are still processing, check again after 5 seconds
-                        setTimeout(checkImage, 5000);
                     }
                 });
         }
 
-        // Initial check
-        checkImage();
+        // Initial status check
+        checkStatus();
     </script>
 </body>
 </html>
