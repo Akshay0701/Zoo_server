@@ -101,9 +101,6 @@
                     updateProgressBar(status);
                     if (status !== 'Completed') {
                         // Check status again after 5 seconds if not completed
-                        document.getElementById('status-container').innerHTML = `
-                            <p>${status}</p>
-                        `;
                         setTimeout(checkStatus, 5000);
                     } else {
                         document.getElementById('status-container').innerHTML = `
