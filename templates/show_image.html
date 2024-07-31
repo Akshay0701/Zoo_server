@@ -19,7 +19,7 @@
         h1 {
             color: #333;
         }
-        .loading-bar {
+        .loading-bar-container {
             width: 100%;
             max-width: 400px;
             height: 30px;
@@ -29,16 +29,12 @@
             margin-top: 20px;
             position: relative;
         }
-        .loading-bar div {
+        .loading-bar {
             height: 100%;
             width: 0;
             background-color: #76c7c0;
             border-radius: 15px;
-            animation: loading 2s linear infinite;
-        }
-        @keyframes loading {
-            0% { width: 0; }
-            100% { width: 100%; }
+            transition: width 0.5s ease-in-out;
         }
         .image-container {
             display: flex;
@@ -60,20 +56,51 @@
     <h1>Lammps Processing</h1>
     <div class="status-container" id="status-container">
         <p>Processing your image. Please wait...</p>
-        <div class="loading-bar"><div></div></div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="progress-bar"></div>
+        </div>
     </div>
     <div class="image-container" id="image-container"></div>
 
     <script>
+        function updateProgressBar(status) {
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+
+            switch (status) {
+                case 'processing':
+                    progress = 25;
+                    break;
+                case 'Step 1: Image Processing and Model Generation':
+                    progress = 25;
+                    break;
+                case 'Step 2: Writing LAMMPS Input Script':
+                    progress = 50;
+                    break;
+                case 'Step 3: Running Lammps Simulation':
+                    progress = 65;
+                    break;
+                case 'Step 4: Creating Images from LAMMPS Output':
+                    progress = 80;
+                    break;
+                case 'Step 4: Creating Images from LAMMPS Output':
+                    progress = 100;
+                    break;
+                default:
+                    progress = 0;
+                    break;
+            }
+
+            progressBar.style.width = progress + '%';
+        }
+
         function checkStatus() {
             fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
                 .then(status => {
+                    updateProgressBar(status);
+
                     if (status !== 'Completed') {
-                        document.getElementById('status-container').innerHTML = `
-                            <p>${status}</p>
-                            <div class="loading-bar"><div></div></div>
-                        `;
                         // Check status again after 5 seconds if not completed
                         setTimeout(checkStatus, 5000);
                     } else {
