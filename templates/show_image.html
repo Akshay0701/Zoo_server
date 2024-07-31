@@ -69,7 +69,7 @@
 
             switch (status) {
                 case 'processing':
-                    progress = 25;
+                    progress = 10;
                     break;
                 case 'Step 1: Image Processing and Model Generation':
                     progress = 25;
@@ -77,14 +77,14 @@
                 case 'Step 2: Writing LAMMPS Input Script':
                     progress = 50;
                     break;
-                case 'Step 3: Running Lammps Simulation':
+                case 'Step 3: Running LAMMPS Simulation':
                     progress = 65;
                     break;
                 case 'Step 4: Creating Images from LAMMPS Output':
                     progress = 80;
                     break;
-                case 'Step 4: Creating Images from LAMMPS Output':
-                    progress = 95;
+                case 'Completed':
+                    progress = 100;
                     break;
                 default:
                     progress = 0;
