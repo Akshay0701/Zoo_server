@@ -34,11 +34,7 @@
             width: 0;
             background-color: #76c7c0;
             border-radius: 15px;
-            animation: loading 2s linear infinite;
-        }
-        @keyframes loading {
-            0% { width: 0; }
-            100% { width: 100%; }
+            transition: width 0.5s;
         }
         .image-container {
             display: flex;
@@ -60,11 +56,21 @@
     <h1>Lammps Processing</h1>
     <div class="status-container" id="status-container">
         <p>Processing your image. Please wait...</p>
-        <div class="loading-bar"><div></div></div>
+        <div class="loading-bar"><div id="progress-bar"></div></div>
     </div>
     <div class="image-container" id="image-container"></div>
 
     <script>
+        let progress = 0;
+        let interval;
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            progress += 5; // Increase the progress by 5% each interval
+            if (progress > 100) progress = 100;
+            progressBar.style.width = progress + '%';
+        }
+
         function checkStatus() {
             fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
@@ -72,11 +78,15 @@
                     if (status !== 'Completed') {
                         document.getElementById('status-container').innerHTML = `
                             <p>${status}</p>
-                            <div class="loading-bar"><div></div></div>
+                            <div class="loading-bar"><div id="progress-bar" style="width: ${progress}%"></div></div>
                         `;
                         // Check status again after 5 seconds if not completed
-                        setTimeout(checkStatus, 5000);
+                        if (progress < 100) {
+                            updateProgressBar();
+                            setTimeout(checkStatus, 5000);
+                        }
                     } else {
+                        clearInterval(interval);
                         document.getElementById('status-container').innerHTML = `
                             <p>Processing Completed!</p>
                         `;
@@ -91,7 +101,8 @@
                 });
         }
 
-        // Initial status check
+        // Initial status check and start progress bar interval
+        interval = setInterval(updateProgressBar, 1000); // Update the progress every second
         checkStatus();
     </script>
 </body>
