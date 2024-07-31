@@ -98,6 +98,9 @@
             fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
                 .then(status => {
+                    document.getElementById('status-container').innerHTML = `
+                            <p>${status}</p>
+                        `;
                     updateProgressBar(status);
                     if (status !== 'Completed') {
                         // Check status again after 5 seconds if not completed
