@@ -34,7 +34,11 @@
             width: 0;
             background-color: #76c7c0;
             border-radius: 15px;
-            transition: width 0.5s;
+            animation: loading 2s linear infinite;
+        }
+        @keyframes loading {
+            0% { width: 0; }
+            100% { width: 100%; }
         }
         .image-container {
             display: flex;
@@ -56,45 +60,11 @@
     <h1>Lammps Processing</h1>
     <div class="status-container" id="status-container">
         <p>Processing your image. Please wait...</p>
-        <div class="loading-bar"><div id="progress-bar"></div>
+        <div class="loading-bar"><div></div></div>
     </div>
     <div class="image-container" id="image-container"></div>
 
     <script>
-        let progress = 0;
-        let interval;
-
-        function updateProgressBar(status) {
-            const progressBar = document.getElementById('progress-bar');
-            let progress = 0;
-
-            switch (status) {
-                case 'processing':
-                    progress = 10;
-                    break;
-                case 'Step 1: Image Processing and Model Generation':
-                    progress = 25;
-                    break;
-                case 'Step 2: Writing LAMMPS Input Script':
-                    progress = 50;
-                    break;
-                case 'Step 3: Running Lammps Simulation':
-                    progress = 75;
-                    break;
-                case 'Step 4: Creating Images from LAMMPS Output':
-                    progress = 100;
-                    break;
-                case 'Step 5: Creating Images from LAMMPS Output':
-                    progress = 100;
-                    break;
-                default:
-                    progress = 0;
-                    break;
-            }
-
-            progressBar.style.width = progress + '%';
-        }
-
         function checkStatus() {
             fetch(`/get_status/{{ user_folder }}`)
                 .then(response => response.text())
@@ -102,14 +72,14 @@
                     if (status !== 'Completed') {
                         document.getElementById('status-container').innerHTML = `
                             <p>${status}</p>
-                            <div class="loading-bar"><div id="progress-bar" style="width: ${progress}%"></div></div>
+                            <div class="loading-bar"><div></div></div>
                         `;
                         // Check status again after 5 seconds if not completed
-                        updateProgressBar(status);
                         setTimeout(checkStatus, 5000);
                     } else {
-                        clearInterval(interval);
-                        document.getElementById('status-container').innerHTML = ``;
+                        document.getElementById('status-container').innerHTML = `
+                            <p>Processing Completed!</p>
+                        `;
                         document.getElementById('image-container').innerHTML = `
                             <h2>Processed Images</h2>
                             <div class="image-container">
@@ -121,8 +91,7 @@
                 });
         }
 
-        // Initial status check and start progress bar interval
-        interval = setInterval(updateProgressBar, 1000); // Update the progress every second
+        // Initial status check
         checkStatus();
     </script>
 </body>
