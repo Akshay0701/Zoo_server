@@ -197,7 +197,7 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
 
 # Step 3: Running LAMMPS Simulation
 def run_lammps_simulation(lammps_input_path, output_folder_path):
-    update_state(state_file_path, "Step 4: Creating Images from LAMMPS Output")
+    update_state(state_file_path, "Step 3: Running Lammps Simulation")
     run_script = f"""
     #!/bin/bash
     #

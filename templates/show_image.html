@@ -64,10 +64,34 @@
         let progress = 0;
         let interval;
 
-        function updateProgressBar() {
+        function updateProgressBar(status) {
             const progressBar = document.getElementById('progress-bar');
-            progress += 5; // Increase the progress by 5% each interval
-            if (progress > 100) progress = 100;
+            let progress = 0;
+
+            switch (status) {
+                case 'processing':
+                    progress = 10;
+                    break;
+                case 'Step 1: Image Processing and Model Generation':
+                    progress = 25;
+                    break;
+                case 'Step 2: Writing LAMMPS Input Script':
+                    progress = 50;
+                    break;
+                case 'Step 3: Running Lammps Simulation':
+                    progress = 75;
+                    break;
+                case 'Step 4: Creating Images from LAMMPS Output':
+                    progress = 100;
+                    break;
+                case 'Step 5: Creating Images from LAMMPS Output':
+                    progress = 100;
+                    break;
+                default:
+                    progress = 0;
+                    break;
+            }
+
             progressBar.style.width = progress + '%';
         }
 
