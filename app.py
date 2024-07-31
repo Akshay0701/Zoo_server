@@ -73,6 +73,8 @@ def check_image(user_folder):
 @app.route('/get_status/<user_folder>')
 def get_status(user_folder):
     state_file_path = os.path.join('outputImage', user_folder, 'state.txt')
+    if not os.path.exists(state_file_path):
+        return 'processing'
     with open(state_file_path, 'r') as state_file:
         status = state_file.read().strip()
     return status
