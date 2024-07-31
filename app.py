@@ -43,9 +43,6 @@ def process_image():
     user_folder = str(uuid.uuid4())
     output_user_folder = os.path.join('outputImage', user_folder)
     os.makedirs(output_user_folder, exist_ok=True)
-    state_file_path = os.path.join('output', user_folder, 'state.txt')
-    with open(state_file_path, 'w') as state_file:
-        state_file.write("Processing")
 
     # Start the task in a new thread
     thread = threading.Thread(target=process_image_task, args=(image_path, output_user_folder))
