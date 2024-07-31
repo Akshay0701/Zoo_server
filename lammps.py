@@ -303,5 +303,5 @@ generate_model(image_path, output_folder_path, binary_image_path, lammps_data_pa
 write_lammps_input(lammps_input_path, lammps_data_path)
 run_lammps_simulation(lammps_input_path, output_folder_path)
 create_image_from_lammps_output(lammps_output_path, ovito_image_path,stress_field_path,combined_image_path)
-
+update_state(state_file_path, "Completed")
 print(f'Final image saved to {ovito_image_path}')
