@@ -102,7 +102,7 @@
 
                     if (status !== 'Completed') {
                         // Check status again after 5 seconds if not completed
-                        setTimeout(checkStatus, 5000);
+                        setTimeout(checkStatus, 2000);
                     } else {
                         document.getElementById('status-container').innerHTML = `
                             <p>Processing Completed!</p>
