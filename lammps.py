@@ -51,6 +51,18 @@ def update_state(state_file_path, message):
     with open(state_file_path, 'w') as state_file:
         state_file.write(message)
 
+def convert_and_invert_binary_image(image_path, output_path, threshold=128):
+    img = Image.open(image_path).convert('L')
+    img_array = np.array(img)
+
+    binary_img_array = np.where(img_array >= threshold, 1, 0)
+
+    inverted_img_array = np.where(binary_img_array == 0, 255, 0).astype(np.uint8)
+
+    inverted_img = Image.fromarray(inverted_img_array)
+    inverted_img.save(output_path)
+
+
 # Step 1: Image Processing and Model Generation
 def generate_model(image_path, output_folder_path, binary_image_path, lammps_data_path):
     update_state(state_file_path, "Step 1: Image Processing and Model Generation")
@@ -59,9 +71,9 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
     grayImage = np.array(img_resized)
 
     # Convert grayscale to binary image using a threshold
-    binaryImage = np.where(grayImage <= 50, 1, 0)
-    binaryImage = np.flip(binaryImage, axis=0)  # Flip the binary image vertically to match the matrix coordinate system
-
+    binaryImage = np.where(grayImage >= 128, 1, 0)
+    binaryImage = np.where(binaryImage == 0, 255, 0).astype(np.uint8)
+   
     cmap = ListedColormap(['white', 'black'])
     plt.imshow(binaryImage, cmap=cmap)
     plt.axis('off')
@@ -254,7 +266,7 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path, stress
 
     # Add stress visualization
     pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), start_value=0, end_value=20000))
-    
+
     # Recompute to apply stress visualization
     data = pipeline.compute()
 
