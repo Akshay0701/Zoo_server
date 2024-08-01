@@ -1,19 +1,22 @@
 import os
-from PIL import Image, ImageTk
+import sys
+import argparse
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
-import sys
 from PySide6.QtWidgets import QApplication
 from ovito.io import import_file, export_file
 from ovito.vis import Viewport, TachyonRenderer
+from ovito.modifiers import ColorCodingModifier
+from ovito.io import import_file
+from ovito.modifiers import AssignColorModifier, ColorCodingModifier, ExpressionSelectionModifier
+from ovito.vis import Viewport, TachyonRenderer
 import math
-from matplotlib.colors import ListedColormap
-from ovito.modifiers import ColorByTypeModifier,ColorCodingModifier,AssignColorModifier,SelectTypeModifier, ExpressionSelectionModifier
-import tkinter as tk
-from tkinter import filedialog, Scrollbar, Canvas
+from PIL import Image
+import math
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Process an image to generate a LAMMPS model.')
