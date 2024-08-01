@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from PIL import Image
+from matplotlib.colors import ListedColormap
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
@@ -58,8 +59,11 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
     grayImage = np.array(img_resized)
 
     # Convert grayscale to binary image using a threshold
-    binaryImage = np.where(grayImage >= 50, 1, 0)
-    plt.imshow(binaryImage, cmap='gray')
+    binaryImage = np.where(grayImage <= 50, 1, 0)
+    binaryImage = np.flip(binaryImage, axis=0)  # Flip the binary image vertically to match the matrix coordinate system
+
+    cmap = ListedColormap(['white', 'black'])
+    plt.imshow(binaryImage, cmap=cmap)
     plt.axis('off')
     plt.savefig(binary_image_path, format='png', dpi=300, bbox_inches='tight')
     plt.close()
@@ -78,8 +82,8 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
         for i in range(nx):
             x = (i * a + (j % 2) * a / 2)
             y = (j * a / 2 * sqrt(3))
-            map_y = int(i / nx * binaryImage.shape[1])
-            map_x = int(j / ny * binaryImage.shape[0])
+            map_y = int(x / lx * binaryImage.shape[1])
+            map_x = binaryImage.shape[0] - 1 - int(y / ly * binaryImage.shape[0])  # Correcting the mapping
             atom_type = binaryImage[map_x, map_y] + 1
             xx.append([atom_type, x, y, 0.0])
             natom += 1
@@ -102,9 +106,9 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
         data_file.write(f'{natom} atoms\n')
         data_file.write(f'{nb} bonds\n')
         data_file.write('2 atom types\n3 bond types\n\n')
-        xlo_xhi = min(positions[:,0]) - (max(positions[:,0]) - min(positions[:,0])) * 1, max(positions[:,0]) + (max(positions[:,0]) - min(positions[:,0])) * 1
-        ylo_yhi = min(positions[:,1]) - (max(positions[:,1]) - min(positions[:,1])) * 0.5, max(positions[:,1]) + (max(positions[:,1]) - min(positions[:,1])) * 0.5
-        zlo_zhi = min(positions[:,2]) - (max(positions[:,0]) - min(positions[:,0])) * 1, max(positions[:,2]) + (max(positions[:,0]) - min(positions[:,0])) * 1
+        xlo_xhi = min(positions[:,0]) - (max(positions[:,0]) - min(positions[:,0])) * 0.1, max(positions[:,0]) + (max(positions[:,0]) - min(positions[:,0])) * 0.1
+        ylo_yhi = min(positions[:,1]) - (max(positions[:,1]) - min(positions[:,1])) * 0.1, max(positions[:,1]) + (max(positions[:,1]) - min(positions[:,1])) * 0.1
+        zlo_zhi = min(positions[:,2]) - (max(positions[:,0]) - min(positions[:,0])) * 0.2, max(positions[:,2]) + (max(positions[:,0]) - min(positions[:,0])) * 0.2
         data_file.write(f'{xlo_xhi[0]} {xlo_xhi[1]} xlo xhi\n')
         data_file.write(f'{ylo_yhi[0]} {ylo_yhi[1]} ylo yhi\n')
         data_file.write(f'{zlo_zhi[0]} {zlo_zhi[1]} zlo zhi\n\n')
