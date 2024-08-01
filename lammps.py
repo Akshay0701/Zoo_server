@@ -72,8 +72,7 @@ def generate_model(image_path, output_folder_path, binary_image_path, lammps_dat
 
     # Convert grayscale to binary image using a threshold
     binaryImage = np.where(grayImage >= 128, 1, 0)
-    binaryImage = np.where(binaryImage == 0, 255, 0).astype(np.uint8)
-   
+
     cmap = ListedColormap(['white', 'black'])
     plt.imshow(binaryImage, cmap=cmap)
     plt.axis('off')
