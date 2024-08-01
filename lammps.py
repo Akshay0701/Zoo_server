@@ -1,22 +1,19 @@
 import os
-import sys
-import argparse
-from PIL import Image
+from PIL import Image, ImageTk
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 from scipy.spatial import cKDTree
 import subprocess
+import sys
 from PySide6.QtWidgets import QApplication
 from ovito.io import import_file, export_file
 from ovito.vis import Viewport, TachyonRenderer
-from ovito.modifiers import ColorCodingModifier
-from ovito.io import import_file
-from ovito.modifiers import AssignColorModifier, ColorCodingModifier, ExpressionSelectionModifier
-from ovito.vis import Viewport, TachyonRenderer
 import math
-from PIL import Image
-import math
+from matplotlib.colors import ListedColormap
+from ovito.modifiers import ColorByTypeModifier,ColorCodingModifier,AssignColorModifier,SelectTypeModifier, ExpressionSelectionModifier
+import tkinter as tk
+from tkinter import filedialog, Scrollbar, Canvas
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description='Process an image to generate a LAMMPS model.')
@@ -258,7 +255,7 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path, stress
     pipeline.modifiers.clear()
     
     # Add stress visualization
-    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), start_value=0, end_value=5))
+    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), start_value=0, end_value=20000))
 
     # Recompute to apply stress visualization
     data = pipeline.compute()
