@@ -63,7 +63,7 @@ def check_image(user_folder):
     for image in required_images:
         image_path = os.path.join(image_dir, image)
         if not os.path.exists(image_path):
-            return 'processing'
+            return 'Step 1: Image Processing and Model Generation'
     
     return 'ready'
 

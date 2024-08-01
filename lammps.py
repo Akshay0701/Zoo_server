@@ -199,15 +199,6 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
 def run_lammps_simulation(lammps_input_path, output_folder_path):
     update_state(state_file_path, "Step 3: Running Lammps Simulation")
     run_script = f"""
-    #!/bin/bash
-    #
-    #SBATCH --nodes=1
-    #SBATCH --ntasks-per-node=1
-    #SBATCH --job-name=zebra_yy
-    #SBATCH --time=10:00:00
-    #SBATCH --output=job_out
-    #SBATCH --error=job_err
-    export PATH=/usr/bin:$PATH
     lmp -in {lammps_input_path} > {output_folder_path}/indent_out_y.out
     """
     run_script_path = os.path.join(output_folder_path, 'run.sh')
