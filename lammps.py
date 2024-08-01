@@ -257,9 +257,6 @@ def create_image_from_lammps_output(lammps_output_path, ovito_image_path, stress
     # Remove color modifiers
     pipeline.modifiers.clear()
     
-    # Add stress visualization
-    pipeline.modifiers.append(ColorCodingModifier(property='v_mises', gradient=ColorCodingModifier.Hot(), start_value=0, end_value=20000))
-
     # Recompute to apply stress visualization
     data = pipeline.compute()
 
