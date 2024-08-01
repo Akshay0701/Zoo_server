@@ -85,9 +85,6 @@
             let progress = 0;
 
             switch (status) {
-                case 'processing':
-                    progress = 10;
-                    break;
                 case 'Step 1: Image Processing and Model Generation':
                     progress = 25;
                     break;
@@ -104,7 +101,7 @@
                     progress = 100;
                     break;
                 default:
-                    progress = 0;
+                    progress = 50;
                     break;
             }
 
