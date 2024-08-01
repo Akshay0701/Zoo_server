@@ -176,18 +176,18 @@ def write_lammps_input(lammps_input_path, lammps_data_path):
    ################################################
    # Relax structure for 100 steps
    ################################################
-   run     100
+   run     1000
    # NOW: One-step tensile deformation applied
     ################################################
-    fix         stretch all deform 1 y delta 0.0 50.0 units box
+    fix         stretch all deform 1 y delta 0.0 5.0 units box
     thermo_style    custom step f_2[2] f_21[2] temp etotal
     thermo_modify   flush yes
     thermo          100
-    run             1
+    run             10
     ################################################
     # Relax structure after deformation
     ################################################
-    minimize        0.0 0.0 2000 2000
+    #minimize        0.0 0.0 2000 2000
     thermo_style    custom step f_2[2] f_21[2] temp etotal
     thermo_modify   flush yes
     run             2000
