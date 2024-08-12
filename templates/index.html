@@ -21,9 +21,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://png.pngtree.com/background/20210717/original/pngtree-jungle-simple-cute-cartoon-animal-background-picture-image_1439315.jpg') no-repeat center center fixed; /* Replace with your image URL */
+            background: url('https://png.pngtree.com/background/20210717/original/pngtree-jungle-simple-cute-cartoon-animal-background-picture-image_1439315.jpg') no-repeat center center fixed;
             background-size: cover;
-            filter: blur(10px); /* Apply blur effect */
+            filter: blur(10px);
             z-index: -1;
         }
         .container {
@@ -32,10 +32,19 @@
             width: 70%;
             max-width: 1200px;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px); /* Apply blur effect */
+            backdrop-filter: blur(10px);
+        }
+        .logos {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .logos img {
+            max-width: 100px;
+            height: 100px;
         }
         h1 {
             margin-bottom: 30px;
@@ -79,12 +88,23 @@
             font-size: 18px;
             font-weight: bold;
         }
+        .team-member span {
+            display: block;
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Title of Project</h1>
+            <div class="logos">
+                <img src="static/team/zoologo.png" alt="Zoo Logo">
+                <img src="static/team/syracuselogo.png" alt="Syracuse Logo">
+                <img src="static/team/logolab.png" alt="Lab Logo">
+            </div>
+            <h1>Title of the Project</h1>
         </header>
         <section>
             <p>Welcome to our project on the analysis of composite structures inspired by animal skin patterns. This research focuses on the structural configurations, stress concentrations, and crack propagation of composite materials under uniaxial tensile loading.</p>
@@ -98,16 +118,19 @@
         <section class="team-section">
             <h2>Meet the Team</h2>
             <div class="team-member">
-                <img src="static/team/milad.jpg" alt="Milad">
+                <img src="static/team/milad.jpg" alt="Milad Masrouri">
                 <p>Milad Masrouri</p>
+                <span>PHD candidate at Syracuse University</span>
             </div>
             <div class="team-member">
-                <img src="static/team/akshay.jpg" alt="Akshay">
+                <img src="static/team/akshay.jpg" alt="Akshay Jadhav">
                 <p>Akshay Jadhav</p>
+                <span>Graduate Student at Syracuse University</span>
             </div>
             <div class="team-member">
-                <img src="static/team/profZhao.jpg" alt="Dr.Zhao Qin">
+                <img src="static/team/profZhao.jpg" alt="Dr. Zhao Qin">
                 <p>Dr. Zhao Qin</p>
+                <span>Professor at Syracuse University</span>
             </div>
         </section>
     </div>
