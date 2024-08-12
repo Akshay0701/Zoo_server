@@ -40,16 +40,33 @@
             transition: width 0.5s ease-in-out;
         }
         .image-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: relative;
             margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
         .image-container img {
             max-width: 100%;
-            margin-top: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .label-container {
+            position: absolute;
+            top: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+        }
+        .label {
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
         }
         .status-container {
             text-align: center;
@@ -124,7 +141,11 @@
                             <p class="completed-text">Processing Completed!</p>
                         `;
                         document.getElementById('image-container').innerHTML = `
-                            <h3>OVITO Image</h3>
+                             <div class="label-container">
+                                <div class="label">Pattern</div>
+                                <div class="label">Deformed Pattern</div>
+                                <div class="label">Stress Field</div>
+                            </div>
                             <img src="/get_ovito_image/{{ user_folder }}" alt="OVITO Image">
                         `;
                     }
