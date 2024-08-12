@@ -39,21 +39,9 @@
             border-radius: 15px;
             transition: width 0.5s ease-in-out;
         }
-        .labels-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-            padding: 0 10px;
-        }
-        .label {
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
         .image-container {
-            margin-top: 10px;
+            position: relative;
+            margin-top: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -63,6 +51,22 @@
             max-width: 100%;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .label-container {
+            position: absolute;
+            top: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+        }
+        .label {
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
         }
         .status-container {
             text-align: center;
@@ -91,6 +95,11 @@
         <div class="loading-bar" id="progress-bar"></div>
     </div>
     <div class="image-container" id="image-container">
+        <div class="label-container">
+            <div class="label">Pattern</div>
+            <div class="label">Deformed Pattern</div>
+            <div class="label">Stress Field</div>
+        </div>
         <img src="/get_ovito_image/{{ user_folder }}" alt="OVITO Image">
     </div>
 
@@ -139,7 +148,7 @@
                             <p class="completed-text">Processing Completed!</p>
                         `;
                         document.getElementById('image-container').innerHTML = `
-                            <div class="labels-container">
+                            <div class="label-container">
                                 <div class="label">Pattern</div>
                                 <div class="label">Deformed Pattern</div>
                                 <div class="label">Stress Field</div>
